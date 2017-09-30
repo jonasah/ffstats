@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ffstats.db" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FFStats.DbHandler\FFStats.DbHandler.csproj" />
     <ProjectReference Include="..\FFStats.Models\FFStats.Models.csproj" />
   </ItemGroup>
