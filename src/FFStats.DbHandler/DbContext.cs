@@ -23,7 +23,15 @@ namespace FFStats.DbHandler
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            // team name is unique
+            modelBuilder.Entity<Team>()
+                .HasIndex(t => t.Name)
+                .IsUnique();
+
+            // player name is unique
+            modelBuilder.Entity<Player>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
         }
     }
 }
