@@ -18,7 +18,7 @@ namespace FFStats.DbHandler
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=ffstats.db");
+            optionsBuilder.UseSqlite(@"Data Source=..\FFStats.DbHandler\ffstats.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

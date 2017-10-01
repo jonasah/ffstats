@@ -19,8 +19,4 @@
     <ProjectReference Include="..\FFStats.Models\FFStats.Models.csproj" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y $(SolutionDir)\src\FFStats.DbHandler\ffstats.db $(ProjectDir)" />
-  </Target>
-
 </Project>
