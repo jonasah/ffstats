@@ -11,11 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ffstats.db" />
+    <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FFStats.DbHandler\FFStats.DbHandler.csproj" />
+    <ProjectReference Include="..\FFStats.Add\FFStats.Add.csproj" />
     <ProjectReference Include="..\FFStats.Models\FFStats.Models.csproj" />
   </ItemGroup>
 
