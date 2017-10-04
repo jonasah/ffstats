@@ -17,6 +17,8 @@ namespace FFStats.Main
     {
         static Settings ParseCommandLine(string[] args)
         {
+            var helpFlags = "-h | --help";
+
             var cmdLineApp = new CommandLineApplication
             {
                 Name = "FFStats"
@@ -31,23 +33,23 @@ namespace FFStats.Main
                 {
                     addScheduleConfig.Description = "Add schedule";
                     addScheduleArg = addScheduleConfig.Argument("file", "Schedule json file");
-                    addScheduleConfig.HelpOption("-h | --help");
+                    addScheduleConfig.HelpOption(helpFlags);
                 });
                 addConfig.Command("lineups", (addLineupsConfig) =>
                 {
                     addLineupsConfig.Description = "Add lineups";
                     addLineupsArg = addLineupsConfig.Argument("files", "Lineup json files", multipleValues: true);
-                    addLineupsConfig.HelpOption("-h | --help");
+                    addLineupsConfig.HelpOption(helpFlags);
                 });
                 addConfig.Command("teams", (addTeamsConfig) =>
                 {
                     addTeamsConfig.Description = "Add teams";
                     addTeamsArg = addTeamsConfig.Argument("teams", "Teams to add", multipleValues: true);
-                    addTeamsConfig.HelpOption("-h | --help");
+                    addTeamsConfig.HelpOption(helpFlags);
                 });
-                addConfig.HelpOption("-h | --help");
+                addConfig.HelpOption(helpFlags);
             });
-            cmdLineApp.HelpOption("-h | --help");
+            cmdLineApp.HelpOption(helpFlags);
             cmdLineApp.Execute(args);
 
             return new Settings
