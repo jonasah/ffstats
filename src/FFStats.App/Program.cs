@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FFStats.Main
+namespace FFStats.App
 {
     struct Settings
     {

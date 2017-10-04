@@ -1,12 +1,12 @@
 ﻿using FFStats.DbHandler;
-using FFStats.Main.Models;
+using FFStats.App.Models;
 using FFStats.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace FFStats.Main
+namespace FFStats.App
 {
     partial class Program
     {
