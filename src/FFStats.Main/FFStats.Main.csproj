@@ -12,10 +12,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FFStats.Add\FFStats.Add.csproj" />
+    <ProjectReference Include="..\FFStats.DbHandler\FFStats.DbHandler.csproj" />
     <ProjectReference Include="..\FFStats.Models\FFStats.Models.csproj" />
   </ItemGroup>
 

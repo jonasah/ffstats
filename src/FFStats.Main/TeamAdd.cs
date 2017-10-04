@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FFStats.Add
+namespace FFStats.Main
 {
-    public partial class Methods
+    partial class Program
     {
         public static void AddTeams(List<string> teams)
         {

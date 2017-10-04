@@ -1,6 +1,4 @@
-﻿using FFStats.Add;
-using FFStats.DbHandler;
-using Microsoft.Extensions.CommandLineUtils;
+﻿using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
 
@@ -15,7 +13,7 @@ namespace FFStats.Main
         public bool IsShowingInformation { get; set; }
     }
 
-    class Program
+    partial class Program
     {
         static Settings ParseCommandLine(string[] args)
         {
@@ -71,7 +69,7 @@ namespace FFStats.Main
                 return;
             }
 
-            Add.Methods.AddTeams(settings.TeamsToAdd);
+            AddTeams(settings.TeamsToAdd);
             
             Console.WriteLine("DONE");
             Console.ReadLine();

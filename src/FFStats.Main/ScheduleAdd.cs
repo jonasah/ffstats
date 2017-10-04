@@ -1,14 +1,14 @@
-﻿using FFStats.Add.Models;
-using FFStats.DbHandler;
+﻿using FFStats.DbHandler;
+using FFStats.Main.Models;
 using FFStats.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace FFStats.Add
+namespace FFStats.Main
 {
-    public partial class Methods
+    partial class Program
     {
         public static void AddSchedule(string scheduleFile)
         {
