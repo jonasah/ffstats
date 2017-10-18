@@ -13,6 +13,7 @@ namespace FFStats.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Range(2014, int.MaxValue)]
         public int Year { get; set; }
         [Range(1, 16)]
         public int Week { get; set; }
