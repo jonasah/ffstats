@@ -15,7 +15,7 @@ namespace FFStats.Models
 
         [Range(2014, int.MaxValue)]
         public int Year { get; set; }
-        [Range(1, 16)]
+        [Range(1, 14)]
         public int Week { get; set; }
 
         [Required]
