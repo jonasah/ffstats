@@ -6,7 +6,6 @@ namespace FFStats.App
 {
     struct Settings
     {
-        public List<string> TeamsToAdd { get; set; }
         public string ScheduleFile { get; set; }
         public List<string> LineupFiles { get; set; }
 
@@ -23,7 +22,6 @@ namespace FFStats.App
             {
                 Name = "FFStats"
             };
-            CommandArgument addTeamsArg = null;
             CommandArgument addScheduleArg = null;
             CommandArgument addLineupsArg = null;
             cmdLineApp.Command("add", (addConfig) =>
@@ -41,12 +39,6 @@ namespace FFStats.App
                     addLineupsArg = addLineupsConfig.Argument("files", "Lineup json files", multipleValues: true);
                     addLineupsConfig.HelpOption(helpFlags);
                 });
-                addConfig.Command("teams", (addTeamsConfig) =>
-                {
-                    addTeamsConfig.Description = "Add teams";
-                    addTeamsArg = addTeamsConfig.Argument("teams", "Teams to add", multipleValues: true);
-                    addTeamsConfig.HelpOption(helpFlags);
-                });
                 addConfig.HelpOption(helpFlags);
             });
             cmdLineApp.HelpOption(helpFlags);
@@ -54,7 +46,6 @@ namespace FFStats.App
 
             return new Settings
             {
-                TeamsToAdd = addTeamsArg.Values,
                 ScheduleFile = addScheduleArg.Value,
                 LineupFiles = addLineupsArg.Values,
                 IsShowingInformation = cmdLineApp.IsShowingInformation
@@ -70,8 +61,6 @@ namespace FFStats.App
                 Console.ReadLine();
                 return;
             }
-
-            AddTeams(settings.TeamsToAdd);
             
             Console.WriteLine("DONE");
             Console.ReadLine();
