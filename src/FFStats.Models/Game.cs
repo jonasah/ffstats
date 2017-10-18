@@ -22,5 +22,8 @@ namespace FFStats.Models
         public Team Team1 { get; set; }
         [Required]
         public Team Team2 { get; set; }
+
+        public double? Points1 { get; set; }
+        public double? Points2 { get; set; }
     }
 }

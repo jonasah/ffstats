@@ -11,7 +11,7 @@ using System;
 namespace FFStats.DbHandler.Migrations
 {
     [DbContext(typeof(FFStatsDbContext))]
-    [Migration("20171001165504_FFStats")]
+    [Migration("20171018210111_FFStats")]
     partial class FFStats
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,10 @@ namespace FFStats.DbHandler.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<double?>("Points1");
+
+                    b.Property<double?>("Points2");
 
                     b.Property<int>("Team1Id");
 
@@ -79,7 +83,7 @@ namespace FFStats.DbHandler.Migrations
 
                     b.Property<int>("PlayerId");
 
-                    b.Property<double>("Points");
+                    b.Property<double?>("Points");
 
                     b.Property<int>("Position");
 

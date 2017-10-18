@@ -41,6 +41,8 @@ namespace FFStats.DbHandler.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Points1 = table.Column<double>(type: "REAL", nullable: true),
+                    Points2 = table.Column<double>(type: "REAL", nullable: true),
                     Team1Id = table.Column<int>(type: "INTEGER", nullable: false),
                     Team2Id = table.Column<int>(type: "INTEGER", nullable: false),
                     Week = table.Column<int>(type: "INTEGER", nullable: false),
@@ -70,7 +72,7 @@ namespace FFStats.DbHandler.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     PlayerId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Points = table.Column<double>(type: "REAL", nullable: false),
+                    Points = table.Column<double>(type: "REAL", nullable: true),
                     Position = table.Column<int>(type: "INTEGER", nullable: false),
                     TeamId = table.Column<int>(type: "INTEGER", nullable: false),
                     Week = table.Column<int>(type: "INTEGER", nullable: false),

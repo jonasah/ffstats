@@ -24,6 +24,6 @@ namespace FFStats.Models
         public Player Player { get; set; }
         public Position Position { get; set; }
 
-        public double Points { get; set; }
+        public double? Points { get; set; }
     }
 }

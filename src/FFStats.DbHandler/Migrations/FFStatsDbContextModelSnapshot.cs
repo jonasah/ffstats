@@ -24,6 +24,10 @@ namespace FFStats.DbHandler.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<double?>("Points1");
+
+                    b.Property<double?>("Points2");
+
                     b.Property<int>("Team1Id");
 
                     b.Property<int>("Team2Id");
@@ -78,7 +82,7 @@ namespace FFStats.DbHandler.Migrations
 
                     b.Property<int>("PlayerId");
 
-                    b.Property<double>("Points");
+                    b.Property<double?>("Points");
 
                     b.Property<int>("Position");
 
