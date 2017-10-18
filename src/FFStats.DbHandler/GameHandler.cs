@@ -12,7 +12,7 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
-                return db.Games.Where(g => g.Id == id).FirstOrDefault();
+                return db.Games.Where(g => g.Id == id).SingleOrDefault();
             }
         }
 

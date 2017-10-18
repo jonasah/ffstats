@@ -39,7 +39,7 @@ namespace FFStats.DbHandler
 
             using (var db = new FFStatsDbContext())
             {
-                return db.Teams.Where(t => t.Name == name).FirstOrDefault();
+                return db.Teams.Where(t => t.Name == name).SingleOrDefault();
             }
         }
     }
