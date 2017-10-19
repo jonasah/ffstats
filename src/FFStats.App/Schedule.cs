@@ -8,28 +8,30 @@ using System.IO;
 
 namespace FFStats.App
 {
-    partial class Program
+    static class Schedule
     {
-        public static void AddSchedule(string scheduleFile)
+        public static void Add(string scheduleFile)
         {
             if (string.IsNullOrEmpty(scheduleFile))
             {
                 return;
             }
 
-            var schedule = JsonConvert.DeserializeObject<Schedule>(File.ReadAllText(scheduleFile));
+            var schedule = JsonConvert.DeserializeObject<Models.Schedule>(File.ReadAllText(scheduleFile));
+
+            GameHandler.DeleteGamesInYear(schedule.Year);
 
             foreach (var week in schedule.Weeks)
             {
                 foreach (var game in week.Games)
                 {
-                    var team1 = TeamHandler.GetTeamByName(game.Team1);
-                    var team2 = TeamHandler.GetTeamByName(game.Team2);
+                    var team1 = TeamHandler.GetTeamByName(game.Team1, createIfNotExists: week.Week == 1);
+                    var team2 = TeamHandler.GetTeamByName(game.Team2, createIfNotExists: week.Week == 1);
 
                     GameHandler.AddGame(new Game
                     {
-                        Team1 = team1,
-                        Team2 = team2,
+                        Team1Id = team1.Id,
+                        Team2Id = team2.Id,
                         Week = week.Week,
                         Year = schedule.Year
                     });

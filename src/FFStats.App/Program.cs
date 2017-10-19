@@ -12,7 +12,7 @@ namespace FFStats.App
         public bool IsShowingInformation { get; set; }
     }
 
-    partial class Program
+    class Program
     {
         static Settings ParseCommandLine(string[] args)
         {
@@ -61,7 +61,9 @@ namespace FFStats.App
                 Console.ReadLine();
                 return;
             }
-            
+
+            Schedule.Add(settings.ScheduleFile);
+
             Console.WriteLine("DONE");
             Console.ReadLine();
         }
