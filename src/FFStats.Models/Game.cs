@@ -18,8 +18,11 @@ namespace FFStats.Models
         [Range(1, 16)]
         public int Week { get; set; }
 
+        public int Team1Id { get; set; }
         [Required]
         public Team Team1 { get; set; }
+
+        public int Team2Id { get; set; }
         [Required]
         public Team Team2 { get; set; }
 
