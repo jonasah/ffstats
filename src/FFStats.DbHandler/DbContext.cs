@@ -15,6 +15,7 @@ namespace FFStats.DbHandler
         public DbSet<Player> Players { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamRecord> TeamRecords { get; set; }
+        public DbSet<PlayoffProbability> PlayoffProbabilities { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
