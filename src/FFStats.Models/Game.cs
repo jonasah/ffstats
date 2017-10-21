@@ -28,5 +28,7 @@ namespace FFStats.Models
 
         public double? Points1 { get; set; }
         public double? Points2 { get; set; }
+
+        public bool HasValidResult { get => (Points1 != null && Points2 != null); }
     }
 }

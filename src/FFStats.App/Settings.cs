@@ -7,8 +7,14 @@ namespace FFStats.App
 {
     class Settings
     {
+        // common
+        public int Year { get; set; }
+        public int Week { get; set; }
+
+        // command specific
         public string ScheduleFile { get; set; }
         public List<string> LineupFiles { get; set; }
+        public bool CalculateStandings { get; set; }
 
         public bool Parse(string[] args)
         {
@@ -72,6 +78,51 @@ namespace FFStats.App
 
                 addCommand.OnExecute(() => {
                     addCommand.SetError("No add command specified");
+                    return 1;
+                });
+            });
+
+            // "calculate" command
+            app.Command("calculate", (calcCommand) =>
+            {
+                calcCommand.Description = "Calculate standings";
+                calcCommand.HelpOption(helpFlags);
+
+                calcCommand.Command("standings", (calcStandingsCommand) =>
+                {
+                    calcStandingsCommand.Description = "Calculate standings";
+                    calcStandingsCommand.HelpOption(helpFlags);
+
+                    var yearOption = calcStandingsCommand.Option("-y | --year", "Year", CommandOptionType.SingleValue);
+                    var weekOption = calcStandingsCommand.Option("-w | --week", "Week", CommandOptionType.SingleValue);
+
+                    calcStandingsCommand.OnExecute(() =>
+                    {
+                        if (!yearOption.HasValue() || !weekOption.HasValue())
+                        {
+                            calcStandingsCommand.SetError("Missing year and/or week");
+                            return 1;
+                        }
+
+                        try
+                        {
+                            Year = int.Parse(yearOption.Value());
+                            Week = int.Parse(weekOption.Value());
+                        }
+                        catch (FormatException)
+                        {
+                            calcStandingsCommand.SetError("Invalid year and/or week");
+                            return 1;
+                        }
+
+                        CalculateStandings = true;
+                        return 0;
+                    });
+                });
+
+                calcCommand.OnExecute(() =>
+                {
+                    calcCommand.SetError("No calculate command specified");
                     return 1;
                 });
             });

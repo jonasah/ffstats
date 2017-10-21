@@ -23,6 +23,10 @@ namespace FFStats.App
             {
                 Lineups.AddFromFiles(settings.LineupFiles);
             }
+            else if (settings.CalculateStandings)
+            {
+                Standings.CalculateStandings(settings.Year, settings.Week);
+            }
 
             Console.WriteLine("DONE");
             Console.ReadLine();

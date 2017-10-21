@@ -59,5 +59,18 @@ namespace FFStats.DbHandler
                 db.SaveChanges();
             }
         }
+
+        public static List<Team> GetTeamsInYear(int year)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                // TODO: union of team1 and team2
+                return db.Games
+                    .Where(g => g.Year == year)
+                    .Select(g => g.Team1)
+                    .Distinct()
+                    .ToList();
+            }
+        }
     }
 }
