@@ -8,7 +8,7 @@ namespace FFStats.DbHandler
 {
     public class TeamHandler
     {
-        public static Team AddTeam(Team team)
+        public static Team Add(Team team)
         {
             using (var db = new FFStatsDbContext())
             {
@@ -19,19 +19,19 @@ namespace FFStats.DbHandler
             return team;
         }
 
-        public static Team GetTeamByName(string name, bool createIfNotExists = false)
+        public static Team GetByName(string name, bool createIfNotExists = false)
         {
             if (createIfNotExists)
             {
                 // get team with createIfNotExists = false
-                var team = GetTeamByName(name);
+                var team = GetByName(name);
 
                 if (team != null)
                 {
                     return team;
                 }
 
-                return AddTeam(new Team
+                return Add(new Team
                 {
                     Name = name
                 });

@@ -25,8 +25,8 @@ namespace FFStats.App
             {
                 foreach (var game in week.Games)
                 {
-                    var team1 = TeamHandler.GetTeamByName(game.Team1, createIfNotExists: week.Week == 1);
-                    var team2 = TeamHandler.GetTeamByName(game.Team2, createIfNotExists: week.Week == 1);
+                    var team1 = TeamHandler.GetByName(game.Team1, createIfNotExists: week.Week == 1);
+                    var team2 = TeamHandler.GetByName(game.Team2, createIfNotExists: week.Week == 1);
 
                     GameHandler.AddGame(new Game
                     {
