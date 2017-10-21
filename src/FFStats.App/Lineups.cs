@@ -17,7 +17,7 @@ namespace FFStats.App
                 return;
             }
 
-            var lineups = JsonConvert.DeserializeObject<Models.Input.WeekLineups>(File.ReadAllText(lineupFile));
+            var lineups = JsonConvert.DeserializeObject<Models.Import.WeekLineups>(File.ReadAllText(lineupFile));
 
             LineupHandler.DeleteLineupsInWeek(lineups.Year, lineups.Week);
 

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FFStats.Models.Input
+namespace FFStats.Models.Import
 {
     public class LineupPlayer
     {

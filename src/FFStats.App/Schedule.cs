@@ -16,7 +16,7 @@ namespace FFStats.App
                 return;
             }
 
-            var schedule = JsonConvert.DeserializeObject<Models.Input.Schedule>(File.ReadAllText(scheduleFile));
+            var schedule = JsonConvert.DeserializeObject<Models.Import.Schedule>(File.ReadAllText(scheduleFile));
 
             GameHandler.DeleteGamesInYear(schedule.Year);
 
