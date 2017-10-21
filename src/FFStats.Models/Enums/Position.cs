@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FFStats.Models
+namespace FFStats.Models.Enums
 {
     public enum Position
     {
