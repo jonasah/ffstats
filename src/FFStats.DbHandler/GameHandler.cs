@@ -40,5 +40,24 @@ namespace FFStats.DbHandler
                 db.SaveChanges();
             }
         }
+
+        public static void UpdatePoints(int year, int week, int teamId, double? points)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                var game = db.Games.Where(g => g.Year == year && g.Week == week && (g.Team1Id == teamId || g.Team2Id == teamId)).Single();
+                
+                if (game.Team1Id == teamId)
+                {
+                    game.Points1 = points;
+                }
+                else
+                {
+                    game.Points2 = points;
+                }
+
+                db.SaveChanges();
+            }
+        }
     }
 }

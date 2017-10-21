@@ -54,6 +54,8 @@ namespace FFStats.App
                     });
                 }
             }
+
+            Games.CalculateGameScores(lineups.Year, lineups.Week);
         }
 
         public static void AddFromFiles(List<string> lineupFiles)
