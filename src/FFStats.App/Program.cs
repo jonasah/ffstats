@@ -63,6 +63,7 @@ namespace FFStats.App
             }
 
             Schedule.Add(settings.ScheduleFile);
+            Lineups.AddFromFiles(settings.LineupFiles);
 
             Console.WriteLine("DONE");
             Console.ReadLine();
