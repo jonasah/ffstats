@@ -17,12 +17,16 @@ namespace FFStats.App
                 return;
             }
 
+            Console.WriteLine("Adding lineups from: {0}", lineupFile);
+
             var lineups = JsonConvert.DeserializeObject<Models.Import.WeekLineups>(File.ReadAllText(lineupFile));
 
             LineupHandler.DeleteLineupsInWeek(lineups.Year, lineups.Week);
 
             foreach (var lineup in lineups.Lineups)
             {
+                Console.WriteLine(" Adding lineup for {0}", lineup.Team);
+
                 var team = TeamHandler.GetByName(lineup.Team);
 
                 foreach (var lineupPlayer in lineup.Players)
