@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FFStats.App.Models
+namespace FFStats.Models.Input
 {
     public class ScheduleGame
     {

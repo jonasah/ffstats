@@ -1,5 +1,4 @@
 ﻿using FFStats.DbHandler;
-using FFStats.App.Models;
 using FFStats.Models;
 using Newtonsoft.Json;
 using System;
@@ -17,7 +16,7 @@ namespace FFStats.App
                 return;
             }
 
-            var schedule = JsonConvert.DeserializeObject<Models.Schedule>(File.ReadAllText(scheduleFile));
+            var schedule = JsonConvert.DeserializeObject<Models.Input.Schedule>(File.ReadAllText(scheduleFile));
 
             GameHandler.DeleteGamesInYear(schedule.Year);
 
