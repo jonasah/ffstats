@@ -28,5 +28,7 @@ namespace FFStats.Models
         public Position Position { get; set; }
 
         public double? Points { get; set; }
+
+        public bool IsByeWeek { get; set; }
     }
 }

@@ -54,7 +54,8 @@ namespace FFStats.App
                         TeamId = team.Id,
                         PlayerId = player.Id,
                         Position = lineupPlayer.LineupPosition,
-                        Points = lineupPlayer.Points
+                        Points = lineupPlayer.Points,
+                        IsByeWeek = lineupPlayer.IsByeWeek
                     });
                 }
             }
