@@ -26,5 +26,13 @@ namespace FFStats.DbHandler
                 return db.Players.Where(p => p.Name == name).SingleOrDefault();
             }
         }
+
+        public static List<Player> GetAll()
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Players.ToList();
+            }
+        }
     }
 }
