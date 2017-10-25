@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace FFStats.App
 {
@@ -20,14 +21,28 @@ namespace FFStats.App
 
             GameHandler.DeleteGamesInYear(schedule.Year);
 
+            var teams = TeamHandler.GetAllTeams().ToDictionary(t => t.Name);
+            var gamesToAdd = new List<Game>();
+
             foreach (var week in schedule.Weeks)
             {
                 foreach (var game in week.Games)
                 {
-                    var team1 = TeamHandler.GetByName(game.Team1, createIfNotExists: week.Week == 1);
-                    var team2 = TeamHandler.GetByName(game.Team2, createIfNotExists: week.Week == 1);
+                    if (!teams.ContainsKey(game.Team1))
+                    {
+                        var team = TeamHandler.Add(new Team { Name = game.Team1 });
+                        teams.Add(team.Name, team);
+                    }
+                    if (!teams.ContainsKey(game.Team2))
+                    {
+                        var team = TeamHandler.Add(new Team { Name = game.Team2 });
+                        teams.Add(team.Name, team);
+                    }
 
-                    GameHandler.AddGame(new Game
+                    var team1 = teams[game.Team1];
+                    var team2 = teams[game.Team2];
+
+                    gamesToAdd.Add(new Game
                     {
                         Team1Id = team1.Id,
                         Team2Id = team2.Id,
@@ -36,6 +51,8 @@ namespace FFStats.App
                     });
                 }
             }
+
+            GameHandler.AddGames(gamesToAdd);
         }
     }
 }
