@@ -81,5 +81,13 @@ namespace FFStats.DbHandler
                     .ToList();
             }
         }
+
+        public static bool YearExists(int year)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Games.Where(g => g.Year == year).FirstOrDefault() != null;
+            }
+        }
     }
 }

@@ -49,5 +49,13 @@ namespace FFStats.DbHandler
                     .ToList();
             }
         }
+
+        public static bool WeekExists(int year, int week)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.LineupPlayers.Where(lp => lp.Year == year && lp.Week == week).FirstOrDefault() != null;
+            }
+        }
     }
 }

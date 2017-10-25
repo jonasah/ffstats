@@ -47,5 +47,13 @@ namespace FFStats.DbHandler
                 db.SaveChanges();
             }
         }
+
+        public static bool WeekExists(int year, int week)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.TeamRecords.Where(tr => tr.Year == year && tr.Week == week).FirstOrDefault() != null;
+            }
+        }
     }
 }
