@@ -39,9 +39,10 @@ namespace FFStats.DbHandler
 
         public static void Add(List<TeamRecord> teamRecords)
         {
-            foreach (var teamRecord in teamRecords)
+            using (var db = new FFStatsDbContext())
             {
-                Add(teamRecord);
+                db.TeamRecords.AddRange(teamRecords);
+                db.SaveChanges();
             }
         }
     }
