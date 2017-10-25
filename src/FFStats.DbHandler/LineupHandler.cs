@@ -20,6 +20,15 @@ namespace FFStats.DbHandler
             return player;
         }
 
+        public static void AddPlayers(List<LineupPlayer> players)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                db.LineupPlayers.AddRange(players);
+                db.SaveChanges();
+            }
+        }
+
         public static void DeleteLineupsInWeek(int year, int week)
         {
             using (var db = new FFStatsDbContext())
