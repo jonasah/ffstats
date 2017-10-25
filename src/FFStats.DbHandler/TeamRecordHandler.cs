@@ -23,6 +23,7 @@ namespace FFStats.DbHandler
             {
                 return db.TeamRecords
                     .Where(tr => tr.Year == year && tr.Week == week)
+                    .OrderBy(tr => tr.Rank)
                     .Include(tr => tr.Head2HeadRecords)
                     .ToList();
             }
