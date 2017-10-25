@@ -14,6 +14,7 @@ namespace FFStats.DbHandler
             using (var db = new FFStatsDbContext())
             {
                 db.TeamRecords.RemoveRange(db.TeamRecords.Where(tr => tr.Year == year && tr.Week == week));
+                db.SaveChanges();
             }
         }
 
