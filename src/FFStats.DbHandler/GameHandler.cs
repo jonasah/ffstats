@@ -19,7 +19,16 @@ namespace FFStats.DbHandler
 
             return game;
         }
-        
+
+        public static void AddGames(List<Game> games)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                db.Games.AddRange(games);
+                db.SaveChanges();
+            }
+        }
+
         public static List<Game> GetGamesByWeek(int year, int week)
         {
             using (var db = new FFStatsDbContext())
