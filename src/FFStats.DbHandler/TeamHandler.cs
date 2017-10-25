@@ -42,5 +42,13 @@ namespace FFStats.DbHandler
                 return db.Teams.Where(t => t.Name == name).SingleOrDefault();
             }
         }
+
+        public static List<Team> GetAllTeams()
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Teams.ToList();
+            }
+        }
     }
 }
