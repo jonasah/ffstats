@@ -10,6 +10,7 @@ namespace FFStats.App
         // common
         public int Year { get; set; }
         public int Week { get; set; }
+        public bool Force { get; set; }
 
         // command specific
         public string ScheduleFile { get; set; }
@@ -32,6 +33,8 @@ namespace FFStats.App
                 addCommand.Description = "Add schedule or lineups";
                 addCommand.HelpOption(helpFlags);
 
+                var forceOption = addCommand.Option("--force", "Override existing data", CommandOptionType.NoValue, true);
+
                 // "add schedule" command
                 addCommand.Command("schedule", (addScheduleCommand) =>
                 {
@@ -49,6 +52,8 @@ namespace FFStats.App
                             addScheduleCommand.SetError("No schedule file specified");
                             return 1;
                         }
+
+                        Force = forceOption.HasValue();
 
                         return 0;
                     });
@@ -72,6 +77,8 @@ namespace FFStats.App
                             return 1;
                         }
 
+                        Force = forceOption.HasValue();
+
                         return 0;
                     });
                 });
@@ -87,6 +94,8 @@ namespace FFStats.App
             {
                 calcCommand.Description = "Calculate standings";
                 calcCommand.HelpOption(helpFlags);
+
+                var forceOption = calcCommand.Option("--force", "Override existing data", CommandOptionType.NoValue, true);
 
                 calcCommand.Command("standings", (calcStandingsCommand) =>
                 {
@@ -116,6 +125,7 @@ namespace FFStats.App
                         }
 
                         CalculateStandings = true;
+                        Force = forceOption.HasValue();
                         return 0;
                     });
                 });

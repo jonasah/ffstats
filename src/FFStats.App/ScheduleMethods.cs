@@ -10,7 +10,7 @@ namespace FFStats.App
 {
     static class ScheduleMethods
     {
-        public static void Add(string scheduleFile)
+        public static void Add(string scheduleFile, bool force = false)
         {
             if (string.IsNullOrEmpty(scheduleFile))
             {
@@ -19,7 +19,19 @@ namespace FFStats.App
 
             var schedule = JsonConvert.DeserializeObject<Models.Import.Schedule>(File.ReadAllText(scheduleFile));
 
-            GameHandler.DeleteGamesInYear(schedule.Year);
+            var yearExists = GameHandler.YearExists(schedule.Year);
+
+            if (yearExists)
+            {
+                if (force)
+                {
+                    GameHandler.DeleteGamesInYear(schedule.Year);
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             var teams = TeamHandler.GetAllTeams().ToDictionary(t => t.Name);
             var gamesToAdd = new List<Game>();

@@ -7,11 +7,25 @@ namespace FFStats.App
 {
     static class StandingsMethods
     {
-        public static Utils.Standings CalculateStandings(int year, int week)
+        public static Utils.Standings CalculateStandings(int year, int week, bool force = false)
         {
             if (week < 1 || week > 14)
             {
                 throw new ArgumentException();
+            }
+
+            var weekExists = TeamRecordHandler.WeekExists(year, week);
+
+            if (weekExists)
+            {
+                if (force)
+                {
+                    TeamRecordHandler.DeleteTeamRecordsInWeek(year, week);
+                }
+                else
+                {
+                    return Utils.Standings.GetStandings(year, week);
+                }
             }
 
             var prevStandings = Utils.Standings.GetStandings(year, week - 1);
@@ -19,7 +33,7 @@ namespace FFStats.App
             if (!prevStandings.IsValid())
             {
                 // previous week's standings does not exist yet
-                prevStandings = CalculateStandings(year, week - 1);
+                prevStandings = CalculateStandings(year, week - 1, force: force);
             }
 
             Console.WriteLine("Calculating standings for {0} week {1}", year, week);

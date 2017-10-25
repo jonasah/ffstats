@@ -11,7 +11,7 @@ namespace FFStats.App
 {
     static class LineupsMethods
     {
-        public static void AddFromFile(string lineupFile)
+        public static void AddFromFile(string lineupFile, bool force = false)
         {
             if (string.IsNullOrEmpty(lineupFile))
             {
@@ -22,7 +22,19 @@ namespace FFStats.App
 
             var lineups = JsonConvert.DeserializeObject<Models.Import.WeekLineups>(File.ReadAllText(lineupFile));
 
-            LineupHandler.DeleteLineupsInWeek(lineups.Year, lineups.Week);
+            var weekExists = LineupHandler.WeekExists(lineups.Year, lineups.Week);
+
+            if (weekExists)
+            {
+                if (force)
+                {
+                    LineupHandler.DeleteLineupsInWeek(lineups.Year, lineups.Week);
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             var players = PlayerHandler.GetAll().ToDictionary(p => p.Name);
             var lineupPlayersToAdd = new List<LineupPlayer>();
@@ -70,11 +82,11 @@ namespace FFStats.App
             GamesMethods.CalculateGameScores(lineups.Year, lineups.Week);
         }
 
-        public static void AddFromFiles(List<string> lineupFiles)
+        public static void AddFromFiles(List<string> lineupFiles, bool force = false)
         {
             foreach (var lineupFile in lineupFiles)
             {
-                AddFromFile(lineupFile);
+                AddFromFile(lineupFile, force: force);
             }
         }
     }

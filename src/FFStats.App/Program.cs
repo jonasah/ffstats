@@ -17,15 +17,15 @@ namespace FFStats.App
 
             if (settings.ScheduleFile != null)
             {
-                ScheduleMethods.Add(settings.ScheduleFile);
+                ScheduleMethods.Add(settings.ScheduleFile, force: settings.Force);
             }
             else if (settings.LineupFiles != null)
             {
-                LineupsMethods.AddFromFiles(settings.LineupFiles);
+                LineupsMethods.AddFromFiles(settings.LineupFiles, force: settings.Force);
             }
             else if (settings.CalculateStandings)
             {
-                StandingsMethods.CalculateStandings(settings.Year, settings.Week);
+                StandingsMethods.CalculateStandings(settings.Year, settings.Week, force: settings.Force);
             }
 
             Console.WriteLine("DONE");
