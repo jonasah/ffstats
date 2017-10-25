@@ -85,6 +85,14 @@ namespace FFStats.App.Utils
             {
                 return tr1.Pct.CompareTo(tr2.Pct);
             });
+
+            var rank = 1;
+
+            foreach (var teamRecord in TeamRecords)
+            {
+                teamRecord.Rank = rank;
+                ++rank;
+            }
         }
 
         private TeamRecord GetTeamRecord(int teamId)

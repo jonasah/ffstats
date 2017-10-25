@@ -22,6 +22,9 @@ namespace FFStats.Models
         [Required]
         public Team Team { get; set; }
 
+        [Range(1, int.MaxValue)]
+        public int Rank { get; set; }
+
         [Range(0, 14)]
         public int Win { get; set; }
         [Range(0, 14)]
