@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FFStats.App
@@ -23,6 +24,9 @@ namespace FFStats.App
 
             LineupHandler.DeleteLineupsInWeek(lineups.Year, lineups.Week);
 
+            var players = PlayerHandler.GetAll().ToDictionary(p => p.Name);
+            var lineupPlayersToAdd = new List<LineupPlayer>();
+
             foreach (var lineup in lineups.Lineups)
             {
                 Console.WriteLine(" Adding lineup for {0}", lineup.Team);
@@ -31,23 +35,24 @@ namespace FFStats.App
 
                 foreach (var lineupPlayer in lineup.Players)
                 {
-                    var player = PlayerHandler.GetByName(lineupPlayer.Name);
-
-                    if (player == null)
+                    if (!players.ContainsKey(lineupPlayer.Name))
                     {
-                        player = PlayerHandler.Add(new Player
+                        var newPlayer = PlayerHandler.Add(new Player
                         {
                             Name = lineupPlayer.Name,
                             Position = lineupPlayer.PlayerPosition
                         });
+                        players.Add(newPlayer.Name, newPlayer);
                     }
+
+                    var player = players[lineupPlayer.Name];
 
                     if (player.Position != lineupPlayer.PlayerPosition)
                     {
                         Console.WriteLine("Position mismatch for {0} in {1} w{2}: {3} != {4}", player.Name, lineups.Year, lineups.Week, player.Position, lineupPlayer.PlayerPosition);
                     }
 
-                    LineupHandler.AddPlayer(new LineupPlayer
+                    lineupPlayersToAdd.Add(new LineupPlayer
                     {
                         Year = lineups.Year,
                         Week = lineups.Week,
@@ -59,6 +64,8 @@ namespace FFStats.App
                     });
                 }
             }
+
+            LineupHandler.AddPlayers(lineupPlayersToAdd);
 
             GamesMethods.CalculateGameScores(lineups.Year, lineups.Week);
         }
