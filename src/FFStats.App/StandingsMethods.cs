@@ -38,6 +38,8 @@ namespace FFStats.App
                 }
             }
 
+            newStandings.SortStandings();
+
             TeamRecordHandler.Add(newStandings.TeamRecords);
 
             return newStandings;
