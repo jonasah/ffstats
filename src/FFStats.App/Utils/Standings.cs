@@ -80,19 +80,39 @@ namespace FFStats.App.Utils
 
         public void SortStandings()
         {
-            // TODO: consider sub-records (tiebreakers)
-            TeamRecords.Sort((tr1, tr2) =>
-            {
-                return tr2.Pct.CompareTo(tr1.Pct);
-            });
+            // sort by percentage first
+            TeamRecords.Sort((tr1, tr2) => tr2.Pct.CompareTo(tr1.Pct));
 
-            var rank = 1;
-
-            foreach (var teamRecord in TeamRecords)
+            // divide into sub-standings where each has the same percentage
+            var subStandings = new List<SubStandings>
             {
-                teamRecord.Rank = rank;
-                ++rank;
+                new SubStandings(TeamRecords.First())
+            };
+
+            for (int i = 1; i < TeamRecords.Count; ++i)
+            {
+                var team1 = TeamRecords[i-1];
+                var team2 = TeamRecords[i];
+
+                if (Math.FuzzyCompareEqual(team1.Pct, team2.Pct))
+                {
+                    subStandings.Last().Add(team2);
+                }
+                else
+                {
+                    subStandings.Add(new SubStandings(team2));
+                }
             }
+
+            // sort each sub-standings
+            subStandings.ForEach(s => s.SortSubStandings());
+
+            // merge sub-standings into final order
+            TeamRecords = subStandings.SelectMany(s => s.TeamRecords).ToList();
+
+            // assign rank
+            var rank = 1;
+            TeamRecords.ForEach(tr => tr.Rank = rank++);
         }
 
         private TeamRecord GetTeamRecord(int teamId)
