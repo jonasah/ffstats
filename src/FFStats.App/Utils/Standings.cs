@@ -83,7 +83,7 @@ namespace FFStats.App.Utils
             // TODO: consider sub-records (tiebreakers)
             TeamRecords.Sort((tr1, tr2) =>
             {
-                return tr1.Pct.CompareTo(tr2.Pct);
+                return tr2.Pct.CompareTo(tr1.Pct);
             });
 
             var rank = 1;
