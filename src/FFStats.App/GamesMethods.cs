@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FFStats.App
 {
-    static class Games
+    static class GamesMethods
     {
         public static void CalculateGameScores(int year, int week)
         {

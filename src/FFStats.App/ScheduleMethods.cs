@@ -7,7 +7,7 @@ using System.IO;
 
 namespace FFStats.App
 {
-    static class Schedule
+    static class ScheduleMethods
     {
         public static void Add(string scheduleFile)
         {

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace FFStats.App
 {
-    static class Lineups
+    static class LineupsMethods
     {
         public static void AddFromFile(string lineupFile)
         {
@@ -59,7 +59,7 @@ namespace FFStats.App
                 }
             }
 
-            Games.CalculateGameScores(lineups.Year, lineups.Week);
+            GamesMethods.CalculateGameScores(lineups.Year, lineups.Week);
         }
 
         public static void AddFromFiles(List<string> lineupFiles)

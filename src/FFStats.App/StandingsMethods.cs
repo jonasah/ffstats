@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FFStats.App
 {
-    static class Standings
+    static class StandingsMethods
     {
         public static Utils.Standings CalculateStandings(int year, int week)
         {
