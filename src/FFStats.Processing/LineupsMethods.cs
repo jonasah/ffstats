@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace FFStats.App
+namespace FFStats.Processing
 {
     static class LineupsMethods
     {

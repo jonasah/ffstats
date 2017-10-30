@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FFStats.App
+namespace FFStats.Processing
 {
     class Settings
     {

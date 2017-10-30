@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using static System.Math;
 using System.Text;
 
-namespace FFStats.App
+namespace FFStats.Processing
 {
     static class Math
     {

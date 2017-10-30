@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FFStats.App
+namespace FFStats.Processing
 {
     class Program
     {

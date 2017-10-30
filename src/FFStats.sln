@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.App", "FFStats.App\FFStats.App.csproj", "{40E49540-26EB-47A4-A0C3-E5786A5BC026}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.Processing", "FFStats.Processing\FFStats.Processing.csproj", "{40E49540-26EB-47A4-A0C3-E5786A5BC026}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.Models", "FFStats.Models\FFStats.Models.csproj", "{0C2505C2-3541-47B8-8C66-0B0B06323C6D}"
 EndProject
