@@ -33,6 +33,12 @@ namespace FFStats.DbHandler
             modelBuilder.Entity<Player>()
                 .HasIndex(p => p.Name)
                 .IsUnique();
+
+            // delete H2H records when team record is deleted
+            modelBuilder.Entity<TeamRecord>()
+                .HasMany(tr => tr.Head2HeadRecords)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

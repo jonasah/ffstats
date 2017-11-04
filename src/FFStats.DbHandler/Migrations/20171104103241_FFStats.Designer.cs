@@ -11,8 +11,8 @@ using System;
 namespace FFStats.DbHandler.Migrations
 {
     [DbContext(typeof(FFStatsDbContext))]
-    [Migration("20171025181803_LineupPlayerIsByeWeek")]
-    partial class LineupPlayerIsByeWeek
+    [Migration("20171104103241_FFStats")]
+    partial class FFStats
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -172,6 +172,8 @@ namespace FFStats.DbHandler.Migrations
 
                     b.Property<double>("PointsFor");
 
+                    b.Property<int>("Rank");
+
                     b.Property<int>("TeamId");
 
                     b.Property<int>("Week");
@@ -214,7 +216,8 @@ namespace FFStats.DbHandler.Migrations
 
                     b.HasOne("FFStats.Models.TeamRecord")
                         .WithMany("Head2HeadRecords")
-                        .HasForeignKey("TeamRecordId");
+                        .HasForeignKey("TeamRecordId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("FFStats.Models.LineupPlayer", b =>

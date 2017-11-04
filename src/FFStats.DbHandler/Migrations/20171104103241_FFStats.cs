@@ -71,6 +71,7 @@ namespace FFStats.DbHandler.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    IsByeWeek = table.Column<bool>(type: "INTEGER", nullable: false),
                     PlayerId = table.Column<int>(type: "INTEGER", nullable: false),
                     Points = table.Column<double>(type: "REAL", nullable: true),
                     Position = table.Column<int>(type: "INTEGER", nullable: false),
@@ -96,6 +97,28 @@ namespace FFStats.DbHandler.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PlayoffProbabilities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExcludingTiebreaker = table.Column<double>(type: "REAL", nullable: false),
+                    IncludingTiebreaker = table.Column<double>(type: "REAL", nullable: false),
+                    TeamId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Week = table.Column<int>(type: "INTEGER", nullable: false),
+                    Year = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayoffProbabilities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlayoffProbabilities_Teams_TeamId",
+                        column: x => x.TeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TeamRecords",
                 columns: table => new
                 {
@@ -104,6 +127,7 @@ namespace FFStats.DbHandler.Migrations
                     Loss = table.Column<int>(type: "INTEGER", nullable: false),
                     PointsAgainst = table.Column<double>(type: "REAL", nullable: false),
                     PointsFor = table.Column<double>(type: "REAL", nullable: false),
+                    Rank = table.Column<int>(type: "INTEGER", nullable: false),
                     TeamId = table.Column<int>(type: "INTEGER", nullable: false),
                     Week = table.Column<int>(type: "INTEGER", nullable: false),
                     Win = table.Column<int>(type: "INTEGER", nullable: false),
@@ -154,7 +178,7 @@ namespace FFStats.DbHandler.Migrations
                         column: x => x.TeamRecordId,
                         principalTable: "TeamRecords",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -199,6 +223,11 @@ namespace FFStats.DbHandler.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_PlayoffProbabilities_TeamId",
+                table: "PlayoffProbabilities",
+                column: "TeamId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TeamRecords_TeamId",
                 table: "TeamRecords",
                 column: "TeamId");
@@ -220,6 +249,9 @@ namespace FFStats.DbHandler.Migrations
 
             migrationBuilder.DropTable(
                 name: "LineupPlayers");
+
+            migrationBuilder.DropTable(
+                name: "PlayoffProbabilities");
 
             migrationBuilder.DropTable(
                 name: "TeamRecords");

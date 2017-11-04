@@ -215,7 +215,8 @@ namespace FFStats.DbHandler.Migrations
 
                     b.HasOne("FFStats.Models.TeamRecord")
                         .WithMany("Head2HeadRecords")
-                        .HasForeignKey("TeamRecordId");
+                        .HasForeignKey("TeamRecordId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("FFStats.Models.LineupPlayer", b =>
