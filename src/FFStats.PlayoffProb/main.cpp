@@ -29,6 +29,7 @@ namespace {
 }
 
 using team_t = quint16;
+using year_t = quint16;
 using week_t = quint16;
 using rank_t = quint16;
 using win_t = quint16;
@@ -441,7 +442,7 @@ void generateOutcomes(const Schedule& schedule, const Standings& prev_week_stand
   }
 }
 
-Standings readStandings(const week_t week) {
+Standings readStandings(const year_t year, const week_t week) {
   Standings standings;
   standings.week = week;
 
@@ -449,7 +450,7 @@ Standings readStandings(const week_t week) {
   {
     QSqlTableModel model;
     model.setTable("TeamRecords");
-    model.setFilter(QString("Year = 2017 AND Week = %1").arg(week));
+    model.setFilter(QString("Year = %1 AND Week = %2").arg(year).arg(week));
     model.setSort(4, Qt::AscendingOrder); // sort by rank
     model.select();
 
@@ -476,7 +477,7 @@ Standings readStandings(const week_t week) {
   for (auto& team_record : standings.records) {
     QSqlTableModel model;
     model.setTable("Head2HeadRecords");
-    model.setFilter(QStringLiteral("Year = 2017 AND Week = %1 AND TeamId = %2").arg(week).arg(g_temp_to_team_table[team_record.team]));
+    model.setFilter(QStringLiteral("Year = %1 AND Week = %2 AND TeamId = %3").arg(year).arg(week).arg(g_temp_to_team_table[team_record.team]));
     model.select();
 
     Q_ASSERT(model.rowCount() == NUM_TEAMS - 1);
@@ -514,7 +515,7 @@ Standings readStandings(const week_t week) {
   return standings;
 }
 
-Schedule readSchedule(const week_t starting_week) {
+Schedule readSchedule(const year_t year, const week_t starting_week) {
   Schedule schedule;
 
 #ifdef MAX_WEEKS_TO_SIMULATE
@@ -525,7 +526,7 @@ Schedule readSchedule(const week_t starting_week) {
 
   QSqlTableModel games_model;
   games_model.setTable("Games");
-  games_model.setFilter(QString("Year = 2017 AND Week >= %1 AND Week <= %2").arg(starting_week).arg(end_week));
+  games_model.setFilter(QString("Year = %1 AND Week >= %2 AND Week <= %3").arg(year).arg(starting_week).arg(end_week));
   games_model.select();
 
   for (int i = 0; i < games_model.rowCount(); ++i) {
@@ -562,13 +563,20 @@ int main(int argc, char** argv) {
   QCoreApplication app(argc, argv);
 
   QCommandLineParser parser;
-  parser.addOption(QCommandLineOption("week", "From week", "week", "0"));
+  parser.addOption(QCommandLineOption("year", "Year", "year"));
+  parser.addOption(QCommandLineOption("week", "From week", "week", "1"));
 
   if (!parser.parse(app.arguments())) {
     qWarning() << parser.errorText();
     return 1;
   }
 
+  if (!parser.isSet("year")) {
+    qWarning() << "Year is missing";
+    return 1;
+  }
+
+  year_t year = parser.value("year").toUShort();
   week_t week = parser.value("week").toUShort();
 
   Q_ASSERT(week >= 1 && week <= 14);
@@ -583,8 +591,8 @@ int main(int argc, char** argv) {
 
   // initial values
   {
-    start_standings = readStandings(week);
-    schedule = readSchedule(week+1);
+    start_standings = readStandings(year, week);
+    schedule = readSchedule(year, week+1);
   }
 
   // do the work
