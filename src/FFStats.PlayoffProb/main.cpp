@@ -6,7 +6,10 @@
 #include <QtCore/QVarLengthArray>
 #include <QtCore/QVector>
 
-#include "xml/pugixml.hpp"
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlRecord>
+#include <QtSql/QSqlTableModel>
 
 #define NUM_TEAMS 8
 #define NUM_PLAYOFF_TEAMS 4
@@ -25,113 +28,41 @@ namespace {
   }
 }
 
-enum class Team : unsigned short {
-  ViciousVoxels = 0,
-  RetroHawks = 1,
-  TheBelichickians = 2,
-  Bonecrushers = 3,
-  KingsOfTheNorth = 4,
-  RamshallEagles = 5,
-  NangijalaIF = 6,
-  TheShamones = 7,
-
-  Unknown = NUM_TEAMS
-};
-
-constexpr auto teamIndex(const Team t) {
-  return static_cast<std::underlying_type_t<Team>>(t);
-}
-
-uint qHash(Team team, uint seed) {
-  return qHash(teamIndex(team), seed);
-}
-
-QString teamToString(const Team team) {
-  switch (team) {
-  case Team::ViciousVoxels:
-    return "Vicious Voxels";
-  case Team::RetroHawks:
-    return "Retro Hawks";
-  case Team::TheBelichickians:
-    return "The Belichickians";
-  case Team::Bonecrushers:
-    return "Bonecrushers";
-  case Team::KingsOfTheNorth:
-    return "Kings of the North";
-  case Team::RamshallEagles:
-    return "Ramshall Eagles";
-  case Team::NangijalaIF:
-    return "Nangijala IF";
-  case Team::TheShamones:
-    return "The Shamones";
-  }
-
-  return "Unknown";
-}
-
-Team stringToTeam(const QString& team_name) {
-  if (team_name == QStringLiteral("Vicious Voxels")) {
-    return Team::ViciousVoxels;
-  }
-  else if (team_name == QStringLiteral("Retro Hawks")) {
-    return Team::RetroHawks;
-  }
-  else if (team_name == QStringLiteral("The Belichickians")) {
-    return Team::TheBelichickians;
-  }
-  else if (team_name == QStringLiteral("Bonecrushers")) {
-    return Team::Bonecrushers;
-  }
-  else if (team_name == QStringLiteral("Kings of the North")) {
-    return Team::KingsOfTheNorth;
-  }
-  else if (team_name == QStringLiteral("Ramshall Eagles")) {
-    return Team::RamshallEagles;
-  }
-  else if (team_name == QStringLiteral("Nangijala IF")) {
-    return Team::NangijalaIF;
-  }
-  else if (team_name == QStringLiteral("The Shamones")) {
-    return Team::TheShamones;
-  }
-
-  return Team::Unknown;
-}
-
-// std::array with size NUM_TEAMS which can be indexed by Team
-template <typename T>
-class TeamAssociativeArray : public std::array<T, NUM_TEAMS> {
-public:
-  using std::array<T, NUM_TEAMS>::operator[];
-
-  T& operator[](const Team t) {
-    return this->operator[](teamIndex(t));
-  }
-
-  const T& operator[](const Team t) const {
-    return this->operator[](teamIndex(t));
-  }
-};
-
+using team_t = quint16;
 using week_t = quint16;
 using rank_t = quint16;
 using win_t = quint16;
 using loss_t = quint16;
 using win_loss_t = qint16;
 
+// conversion from team id in database to temporary team id
+QHash<team_t, team_t> g_team_to_temp_table;
+// conversion from temporary team id to team id in database
+QHash<team_t, team_t> g_temp_to_team_table;
+// team name lookup table
+QHash<team_t, QString> g_team_names;
+
+QString teamToString(const team_t team) {
+  return g_team_names[team];
+}
+
+// std::array with size NUM_TEAMS
+template <typename T>
+using TeamAssociativeArray = std::array<T, NUM_TEAMS>;
+
 // a team's win/loss record and head to head record against other teams
 struct TeamRecord {
-  Team team;
+  team_t team;
   win_t win;
   loss_t loss;
 
   // head to head record, positive more wins, negative more losses
   TeamAssociativeArray<win_loss_t> head2head;
 
-  TeamRecord() : team(Team::Unknown), win(0), loss(0) {}
-  TeamRecord(const Team t, const win_t w, const loss_t l) : team(t), win(w), loss(l) {}
+  TeamRecord() : team(NUM_TEAMS), win(0), loss(0) {}
+  TeamRecord(const team_t t, const win_t w, const loss_t l) : team(t), win(w), loss(l) {}
 
-  void setHead2HeadRecord(const Team vs, const win_loss_t h2h) {
+  void setHead2HeadRecord(const team_t vs, const win_loss_t h2h) {
     head2head[vs] = h2h;
   }
 };
@@ -146,11 +77,11 @@ bool operator<(const TeamRecord& record1, const TeamRecord& record2) {
 }
 
 struct SubTeamRecord {
-  Team team;
+  team_t team;
   win_loss_t win_loss;
 
   SubTeamRecord() = default;
-  SubTeamRecord(const Team t) : team(t), win_loss(0) {}
+  SubTeamRecord(const team_t t) : team(t), win_loss(0) {}
 };
 
 bool operator<(const SubTeamRecord& record1, const SubTeamRecord& record2) {
@@ -160,11 +91,11 @@ bool operator<(const SubTeamRecord& record1, const SubTeamRecord& record2) {
 
 // result of a single game
 struct GameResult {
-  Team win;
-  Team loss;
+  team_t win;
+  team_t loss;
 
   GameResult() = default;
-  GameResult(const Team w, const Team l) : win(w), loss(l) {}
+  GameResult(const team_t w, const team_t l) : win(w), loss(l) {}
 };
 
 // game results for one week
@@ -197,7 +128,7 @@ struct Standings {
     m_cache_valid = false;
   }
 
-  auto teamRank(const Team team) const {
+  auto teamRank(const team_t team) const {
     rank_t rank = 1;
     for (const TeamRecord& record : records) {
       if (team == record.team) {
@@ -211,7 +142,7 @@ struct Standings {
     return rank_t{0};
   }
 
-  bool inPlayoffs(const Team team, const bool include_tiebreakers) const {
+  bool inPlayoffs(const team_t team, const bool include_tiebreakers) const {
     if (numWinsForTeam(team) > numWinsForRank(NUM_PLAYOFF_TEAMS + 1)) {
       return true;
     }
@@ -231,7 +162,7 @@ struct Standings {
     return include_tiebreakers;
   }
 
-  win_t numWinsForTeam(const Team team) const {
+  win_t numWinsForTeam(const team_t team) const {
     for (const TeamRecord& record : records) {
       if (team == record.team) {
         return record.win;
@@ -250,7 +181,7 @@ struct Standings {
     return !findTiebreakerTeams().isEmpty();
   }
 
-  QHash<Team, TeamRecord> findTiebreakerTeams() const {
+  QHash<team_t, TeamRecord> findTiebreakerTeams() const {
     if (m_cache_valid) {
       return m_tiebreaker_team_cache;
     }
@@ -344,7 +275,7 @@ struct Standings {
   }
 
 private:
-  mutable QHash<Team, TeamRecord> m_tiebreaker_team_cache;
+  mutable QHash<team_t, TeamRecord> m_tiebreaker_team_cache;
   mutable bool m_cache_valid = false;
 };
 
@@ -360,15 +291,8 @@ public:
       }
     }
 
-    {
-      m_playoff[Team::ViciousVoxels] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-      m_playoff[Team::RetroHawks] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-      m_playoff[Team::TheBelichickians] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-      m_playoff[Team::Bonecrushers] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-      m_playoff[Team::KingsOfTheNorth] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-      m_playoff[Team::RamshallEagles] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-      m_playoff[Team::NangijalaIF] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-      m_playoff[Team::TheShamones] = { Q_UINT64_C(0), Q_UINT64_C(0) };
+    for (team_t team = 0; team < NUM_TEAMS; ++team) {
+      m_playoff[team] = { Q_UINT64_C(0), Q_UINT64_C(0) };
     }
   }
 
@@ -385,11 +309,7 @@ public:
       ++m_tiebreaker_count;
     }
 
-    static const auto teams =
-        QVector<Team>() << Team::ViciousVoxels << Team::RetroHawks << Team::TheBelichickians << Team::Bonecrushers
-                        << Team::KingsOfTheNorth << Team::RamshallEagles << Team::NangijalaIF << Team::TheShamones;
-
-    for (const auto team : teams) {
+    for (team_t team = 0; team < NUM_TEAMS; ++team) {
       if (outcome.inPlayoffs(team, false)) {
         ++m_playoff[team].first;
       }
@@ -428,10 +348,10 @@ public:
 
     qDebug() << endl << "-- Playoff probabilities --";
 
-    std::underlying_type_t<Team> team_index = 0;
+    team_t team_index = 0;
 
     for (const auto& playoffs : m_playoff) {
-      const auto team = static_cast<Team>(team_index);
+      const auto team = team_index;
       const auto playoffs_excl = playoffs.first;
       const auto playoffs_incl = playoffs.second;
 
@@ -441,7 +361,7 @@ public:
       const auto playoffs_incl_prob = playoffs_incl / static_cast<double>(m_counter);
       const auto tiebreaker_prob = tiebreaker_counter / static_cast<double>(m_counter);
 
-      qDebug() << teamToString(team);
+      qDebug() << teamToString(g_temp_to_team_table[team]);
       qDebug().nospace() << "  Excl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_excl_prob << "\t(" << playoffs_excl << ")";
       qDebug().nospace() << "  Tiebreaker\t" << qSetRealNumberPrecision(4) << tiebreaker_prob << "\t(" << tiebreaker_counter << ')';
       qDebug().nospace() << "  Incl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_incl_prob << "\t(" << playoffs_incl << ')';
@@ -459,22 +379,8 @@ private:
   TeamAssociativeArray<QPair<quint64, quint64>> m_playoff;
 };
 
-using Game = QPair<Team, Team>;
+using Game = QPair<team_t, team_t>;
 using Schedule = QMap<week_t, QVector<Game>>;
-
-//QDebug operator<<(QDebug dbg, const Standings& standings) {
-//  for (const TeamRecord& record : standings.records) {
-//    dbg.nospace()
-//        << teamToString(record.team) << '\t'
-//        << record.win << '-' << record.loss << endl;
-
-//    for (auto it = record.head2head.cbegin(); it != record.head2head.cend(); ++it) {
-//      dbg.nospace() << "  " << teamToString(it.key()) << '\t' << it.value() << endl;
-//    }
-//  }
-
-//  return dbg;
-//}
 
 // generate all possible results for a single game
 QVector<GameResult> generateGameResults(const Game& game) {
@@ -535,91 +441,121 @@ void generateOutcomes(const Schedule& schedule, const Standings& prev_week_stand
   }
 }
 
-Standings readStandings(const week_t week, const pugi::xml_node& xml) {
+Standings readStandings(const week_t week) {
   Standings standings;
   standings.week = week;
 
-  for (const auto& week_elem : xml) {
-    const auto week_no = week_elem.attribute("no").as_int();
+  // fetch team records
+  {
+    QSqlTableModel model;
+    model.setTable("TeamRecords");
+    model.setFilter(QString("Year = 2017 AND Week = %1").arg(week));
+    model.setSort(4, Qt::AscendingOrder); // sort by rank
+    model.select();
 
-    if (week_no != week) {
-      continue;
+    Q_ASSERT(model.rowCount() == NUM_TEAMS);
+
+    for (int i = 0; i < model.rowCount(); ++i) {
+      auto sql_record = model.record(i);
+      const auto team = sql_record.value("TeamId").value<team_t>();
+      const auto win = sql_record.value("Win").value<wint_t>();
+      const auto loss = sql_record.value("Loss").value<loss_t>();
+
+      // use temporary zero-based team id during calculations
+      const auto temp_team = g_team_to_temp_table.keys().count();
+      g_team_to_temp_table.insert(team, temp_team);
+      g_temp_to_team_table.insert(temp_team, team);
+
+      TeamRecord team_record(temp_team, win, loss);
+
+      standings.records[i] = team_record;
     }
+  }
 
-    auto counter = size_t{0};
+  // fetch h2h records
+  for (auto& team_record : standings.records) {
+    QSqlTableModel model;
+    model.setTable("Head2HeadRecords");
+    model.setFilter(QStringLiteral("Year = 2017 AND Week = %1 AND TeamId = %2").arg(week).arg(g_temp_to_team_table[team_record.team]));
+    model.select();
 
-    for (const auto& team_elem : week_elem) {
-      const auto team = stringToTeam(QString(team_elem.attribute("name").as_string()));
-      const auto record = QString(team_elem.attribute("record").as_string()).split('-');
+    Q_ASSERT(model.rowCount() == NUM_TEAMS - 1);
 
-      Q_ASSERT(record.size() == 2);
+    for (int j = 0; j < model.rowCount(); ++j) {
+      auto sql_record = model.record(j);
+      const auto opponent = sql_record.value("OpponentId").value<team_t>();
+      const auto w = sql_record.value("Win").value<win_loss_t>();
+      const auto l = sql_record.value("Loss").value<win_loss_t>();
 
-      TeamRecord team_record(team, record.at(0).toUShort(), record.at(1).toUShort());
-
-      // count win and loss for assert
-      auto win = 0;
-      auto loss = 0;
-
-      for (const auto& h2h_elem : team_elem) {
-        const auto team = stringToTeam(QString(h2h_elem.attribute("team").as_string()));
-        const auto record = QString(h2h_elem.attribute("record").as_string()).split('-');
-
-        Q_ASSERT(record.size() == 2);
-
-        team_record.setHead2HeadRecord(team, record.at(0).toShort() - record.at(1).toShort());
-
-        win += record.at(0).toInt();
-        loss += record.at(1).toInt();
-      }
-
-      Q_ASSERT(win == team_record.win);
-      Q_ASSERT(loss == team_record.loss);
-
-      standings.records[counter] = team_record;
-
-      ++counter;
+      team_record.setHead2HeadRecord(g_team_to_temp_table[opponent], w - l);
     }
+  }
 
-    Q_ASSERT(counter == NUM_TEAMS);
+  // fetch team names
+  {
+    // convert team ids to list of strings
+    auto team_ids = g_team_to_temp_table.keys();
+    QStringList team_ids_as_string;
+    std::transform(team_ids.cbegin(), team_ids.cend(), std::back_inserter(team_ids_as_string), [](auto id) { return QString::number(id); });
 
-    break;
+    QSqlTableModel model;
+    model.setTable("Teams");
+    model.setFilter(QString("Id in (%1)").arg(team_ids_as_string.join(',')));
+    model.select();
+
+    for (int i = 0; i < model.rowCount(); ++i) {
+      auto sql_record = model.record(i);
+      const auto team_id = sql_record.value("Id").value<team_t>();
+      const auto team_name = sql_record.value("Name").toString();
+      g_team_names.insert(team_id, team_name);
+    }
   }
 
   return standings;
 }
 
-Schedule readSchedule(const week_t starting_week, const pugi::xml_node& xml) {
+Schedule readSchedule(const week_t starting_week) {
   Schedule schedule;
 
-  for (const auto& week_elem : xml) {
-    const auto week = static_cast<week_t>(week_elem.attribute("no").as_uint());
-
-    if (week < starting_week) {
-      continue;
-    }
-
-    schedule.insert(week, QVector<Game>());
-
-    for (auto game_it = week_elem.begin(); game_it != week_elem.end(); ++game_it) {
-      const auto game_elem = *game_it;
-
-      const auto team1 = stringToTeam(game_elem.first_child().attribute("name").as_string());
-      const auto team2 = stringToTeam(game_elem.last_child().attribute("name").as_string());
-
-      schedule[week].append(Game(team1, team2));
-    }
-
 #ifdef MAX_WEEKS_TO_SIMULATE
-    static auto counter = 0;
-    ++counter;
-
-    if (counter == MAX_WEEKS_TO_SIMULATE) {
-      break;
-    }
+  const week_t end_week = qMin(starting_week + MAX_WEEKS_TO_SIMULATE - 1, 14);
+#else
+  const week_t end_week = 14;
 #endif
+
+  QSqlTableModel games_model;
+  games_model.setTable("Games");
+  games_model.setFilter(QString("Year = 2017 AND Week >= %1 AND Week <= %2").arg(starting_week).arg(end_week));
+  games_model.select();
+
+  for (int i = 0; i < games_model.rowCount(); ++i) {
+    auto game_sql_record = games_model.record(i);
+    const auto week = game_sql_record.value("Week").value<week_t>();
+
+    if (!schedule.contains(week)) {
+      schedule.insert(week, QVector<Game>());
+    }
+
+    const auto team1 = game_sql_record.value("Team1Id").value<team_t>();
+    const auto team2 = game_sql_record.value("Team2Id").value<team_t>();
+
+    Q_ASSERT(g_team_to_temp_table.contains(team1));
+    Q_ASSERT(g_team_to_temp_table.contains(team2));
+
+    schedule[week].append(Game(g_team_to_temp_table[team1], g_team_to_temp_table[team2]));
   }
 
   return schedule;
+}
+
+bool initDatabaseConnection() {
+  auto db = QSqlDatabase::addDatabase("QSQLITE");
+  db.setDatabaseName(R"(..\FFStats.DbHandler\ffstats.db)");
+  return db.open();
+}
+
+QString getDatabaseError() {
+  return QSqlDatabase::database().lastError().text();
 }
 
 int main(int argc, char** argv) {
@@ -635,19 +571,20 @@ int main(int argc, char** argv) {
 
   week_t week = parser.value("week").toUShort();
 
-  Q_ASSERT(week <= 14);
+  Q_ASSERT(week >= 1 && week <= 14);
+
+  if (!initDatabaseConnection()) {
+    qWarning() << "Failed to initialize database: " << getDatabaseError();
+    return 1;
+  }
 
   Standings start_standings;
   Schedule schedule;
 
   // initial values
   {
-    auto&& xml_doc = pugi::xml_document{};
-    xml_doc.load_file("fantasyfootball.xml");
-    const auto xml_root = xml_doc.document_element();
-
-    start_standings = readStandings(week, xml_root.child("standings"));
-    schedule = readSchedule(week+1, xml_root.child("schedule"));
+    start_standings = readStandings(week);
+    schedule = readSchedule(week+1);
   }
 
   // do the work
