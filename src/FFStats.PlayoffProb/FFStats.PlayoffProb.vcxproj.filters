@@ -41,5 +41,11 @@
     <ClInclude Include="teaminfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="playoffprobcalculator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
