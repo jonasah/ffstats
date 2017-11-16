@@ -94,6 +94,15 @@ xcopy /y "C:\Qt\5.9.2\msvc2017_64\bin\Qt5Sql.dll" $(OutDir)</Command>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="analyzer.h" />
+    <ClInclude Include="database.h" />
+    <ClInclude Include="gameresult.h" />
+    <ClInclude Include="standings.h" />
+    <ClInclude Include="teaminfo.h" />
+    <ClInclude Include="teamrecord.h" />
+    <ClInclude Include="typedefs.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
