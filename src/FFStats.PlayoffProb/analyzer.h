@@ -3,6 +3,7 @@
 
 #include <QtCore/QDebug>
 
+#include "database.h"
 #include "standings.h"
 #include "teaminfo.h"
 
@@ -46,7 +47,7 @@ public:
     }
   }
 
-  void summarize() const {
+  void summarize(const year_t year, const week_t week) const {
     qDebug() << "No of outcomes:" << m_counter << endl;
 
     const auto tiebreaker_prob = m_tiebreaker_count / static_cast<double>(m_counter);
@@ -75,10 +76,14 @@ public:
 
     qDebug() << endl << "-- Playoff probabilities --";
 
+    // delete old probabilities for this week
+    DeleteQuery("PlayoffProbabilities", QString("Year = %1 AND Week = %2").arg(year).arg(week)).execute();
+
+    InsertQuery query("PlayoffProbabilities");
     team_t team_index = 0;
 
     for (const auto& playoffs : m_playoff) {
-      const auto team = team_index;
+      const auto team_id = TeamInfo::getDatabaseId(team_index);
       const auto playoffs_excl = playoffs.first;
       const auto playoffs_incl = playoffs.second;
 
@@ -88,13 +93,24 @@ public:
       const auto playoffs_incl_prob = playoffs_incl / static_cast<double>(m_counter);
       const auto tiebreaker_prob = tiebreaker_counter / static_cast<double>(m_counter);
 
-      qDebug() << TeamInfo::getNameForTemporaryId(team);
+      qDebug() << TeamInfo::getNameForDatabaseId(team_id);
       qDebug().nospace() << "  Excl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_excl_prob << "\t(" << playoffs_excl << ")";
       qDebug().nospace() << "  Tiebreaker\t" << qSetRealNumberPrecision(4) << tiebreaker_prob << "\t(" << tiebreaker_counter << ')';
       qDebug().nospace() << "  Incl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_incl_prob << "\t(" << playoffs_incl << ')';
 
+      query.addRow(
+      {
+        {"Week", week},
+        {"Year", year},
+        {"TeamId", team_id},
+        {"ExcludingTiebreaker", playoffs_excl_prob},
+        {"IncludingTiebreaker", playoffs_incl_prob}
+      });
+
       ++team_index;
     }
+
+    query.execute();
   }
 
 private:

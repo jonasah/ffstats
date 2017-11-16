@@ -3,6 +3,8 @@
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
+#include <QtSql/QSqlField>
+#include <QtSql/QSqlQuery>
 #include <QtSql/QSqlTableModel>
 
 class Database {
@@ -19,7 +21,14 @@ public:
 };
 
 
-class SelectQuery {
+class QueryInterface {
+public:
+  virtual ~QueryInterface() = default;
+
+  virtual bool execute() = 0;
+};
+
+class SelectQuery : QueryInterface {
 public:
   class const_iterator;
 
@@ -32,8 +41,8 @@ public:
     m_model.setSort(column, sort_order);
   }
 
-  void execute() {
-    m_model.select();
+  bool execute() override {
+    return m_model.select();
   }
 
   auto rowCount() const {
@@ -80,6 +89,47 @@ public:
 
 private:
   QSqlTableModel m_model;
+};
+
+
+class InsertQuery : QueryInterface {
+public:
+  explicit InsertQuery(const QString& table) {
+    m_model.setTable(table);
+    m_model.setEditStrategy(QSqlTableModel::OnManualSubmit);
+  }
+
+  bool execute() override {
+    return m_model.submitAll();
+  }
+
+  void addRow(const QHash<QString, QVariant>& column_data) {
+    const auto row = m_model.rowCount();
+    m_model.insertRow(row);
+
+    for (auto it = column_data.cbegin(), e = column_data.cend(); it != e; ++it) {
+      m_model.setData(m_model.index(row, m_model.fieldIndex(it.key())), it.value());
+    }
+  }
+
+private:
+  QSqlTableModel m_model;
+};
+
+
+class DeleteQuery : QueryInterface {
+public:
+  DeleteQuery(const QString& table, const QString& filter) :
+    m_query(QStringLiteral("DELETE FROM %1 WHERE %2").arg(table, filter))
+  {
+  }
+
+  bool execute() override {
+    return m_query.exec();
+  }
+
+private:
+  QSqlQuery m_query;
 };
 
 #endif

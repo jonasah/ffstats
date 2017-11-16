@@ -46,7 +46,7 @@ public:
       const auto t1 = std::chrono::steady_clock::now();
 #endif
 
-      analyzer.summarize();
+      analyzer.summarize(year, week);
 
 #ifdef TIME_MEASURE
       const auto nsecs = std::chrono::nanoseconds{ t1 - t0 }.count();
