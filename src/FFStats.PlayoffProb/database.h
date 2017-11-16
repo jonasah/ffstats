@@ -93,6 +93,11 @@ private:
 
 class InsertQuery : public QueryInterface {
 public:
+  struct FieldData {
+    QString name;
+    QVariant value;
+  };
+
   explicit InsertQuery(const QString& table) {
     m_model.setTable(table);
     m_model.setEditStrategy(QSqlTableModel::OnManualSubmit);
@@ -102,12 +107,12 @@ public:
     return m_model.submitAll();
   }
 
-  void addRow(const QHash<QString, QVariant>& column_data) {
+  void addRow(const QVector<FieldData>& column_data) {
     const auto row = m_model.rowCount();
     m_model.insertRow(row);
 
-    for (auto it = column_data.cbegin(), e = column_data.cend(); it != e; ++it) {
-      m_model.setData(m_model.index(row, m_model.fieldIndex(it.key())), it.value());
+    for (auto field : column_data) {
+      m_model.setData(m_model.index(row, m_model.fieldIndex(field.name)), field.value);
     }
   }
 
