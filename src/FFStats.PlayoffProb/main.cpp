@@ -3,7 +3,6 @@
 #include <QtCore/QCommandLineParser>
 
 #include <QtSql/QSqlRecord>
-#include <QtSql/QSqlTableModel>
 
 #include "analyzer.h"
 #include "database.h"
@@ -156,21 +155,18 @@ Schedule readSchedule(const year_t year, const week_t starting_week) {
   const week_t end_week = 14;
 #endif
 
-  QSqlTableModel games_model;
-  games_model.setTable("Games");
-  games_model.setFilter(QString("Year = %1 AND Week >= %2 AND Week <= %3").arg(year).arg(starting_week).arg(end_week));
-  games_model.select();
+  SelectQuery query("Games", QString("Year = %1 AND Week >= %2 AND Week <= %3").arg(year).arg(starting_week).arg(end_week));
+  query.execute();
 
-  for (int i = 0; i < games_model.rowCount(); ++i) {
-    auto game_sql_record = games_model.record(i);
-    const auto week = game_sql_record.value("Week").value<week_t>();
+  for (auto sql_record : query) {
+    const auto week = sql_record.value("Week").value<week_t>();
 
     if (!schedule.contains(week)) {
       schedule.insert(week, QVector<Game>());
     }
 
-    const auto team1 = game_sql_record.value("Team1Id").value<team_t>();
-    const auto team2 = game_sql_record.value("Team2Id").value<team_t>();
+    const auto team1 = sql_record.value("Team1Id").value<team_t>();
+    const auto team2 = sql_record.value("Team2Id").value<team_t>();
 
     Q_ASSERT(TeamInfo::exists(team1));
     Q_ASSERT(TeamInfo::exists(team2));

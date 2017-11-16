@@ -3,6 +3,7 @@
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
+#include <QtSql/QSqlTableModel>
 
 class Database {
 public:
