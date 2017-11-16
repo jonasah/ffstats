@@ -28,7 +28,7 @@ public:
   virtual bool execute() = 0;
 };
 
-class SelectQuery : QueryInterface {
+class SelectQuery : public QueryInterface {
 public:
   class const_iterator;
 
@@ -91,8 +91,7 @@ private:
   QSqlTableModel m_model;
 };
 
-
-class InsertQuery : QueryInterface {
+class InsertQuery : public QueryInterface {
 public:
   explicit InsertQuery(const QString& table) {
     m_model.setTable(table);
@@ -116,8 +115,7 @@ private:
   QSqlTableModel m_model;
 };
 
-
-class DeleteQuery : QueryInterface {
+class DeleteQuery : public QueryInterface {
 public:
   DeleteQuery(const QString& table, const QString& filter) :
     m_query(QStringLiteral("DELETE FROM %1 WHERE %2").arg(table, filter))
