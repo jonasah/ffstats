@@ -30,6 +30,7 @@ namespace FFStats.Models
         public int Win { get; set; }
         [Range(0, 14)]
         public int Loss { get; set; }
-        public int Record { get => (Win - Loss); }
+        public int GamesPlayed { get => (Win + Loss); }
+        public double Pct { get => (GamesPlayed == 0 ? 0 : ((double)Win / GamesPlayed)); }
     }
 }
