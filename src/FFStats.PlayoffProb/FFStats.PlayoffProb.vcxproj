@@ -56,17 +56,17 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>C:\Qt\5.9.2\msvc2017_64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Qt\5.9.3\msvc2017_64\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Qt\5.9.2\msvc2017_64\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Qt\5.9.3\msvc2017_64\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Qt5Cored.lib;Qt5Sqld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "C:\Qt\5.9.2\msvc2017_64\bin\Qt5Cored.dll" $(OutDir)
-xcopy /y "C:\Qt\5.9.2\msvc2017_64\bin\Qt5Sqld.dll" $(OutDir)</Command>
+      <Command>xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Cored.dll" $(OutDir)
+xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Sqld.dll" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,19 +76,19 @@ xcopy /y "C:\Qt\5.9.2\msvc2017_64\bin\Qt5Sqld.dll" $(OutDir)</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Qt\5.9.2\msvc2017_64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Qt\5.9.3\msvc2017_64\include</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Qt\5.9.2\msvc2017_64\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Qt\5.9.3\msvc2017_64\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>Qt5Core.lib;Qt5Sql.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "C:\Qt\5.9.2\msvc2017_64\bin\Qt5Core.dll" $(OutDir)
-xcopy /y "C:\Qt\5.9.2\msvc2017_64\bin\Qt5Sql.dll" $(OutDir)</Command>
+      <Command>xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Core.dll" $(OutDir)
+xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Sql.dll" $(OutDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
