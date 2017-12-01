@@ -26,7 +26,7 @@ namespace FFStats.WebApp.Controllers
             return View(new PlayerInfo
             {
                 Player = PlayerHandler.GetById(id),
-                Years = LineupHandler.GetNumWeeksOnRoster(id).Select(t => new PlayerYearInfo
+                Years = RosterHandler.GetNumWeeksOnRosterGroupedByYear(id).Select(t => new PlayerYearInfo
                 {
                     Year = t.Item1,
                     NumTeams = t.Item2,
@@ -39,7 +39,7 @@ namespace FFStats.WebApp.Controllers
         [Route("{id}/season/{year}")]
         public IActionResult PlayerInfoSeason(int id, int year)
         {
-            return View(LineupHandler.GetByPlayerAndYear(id, year));
+            return View(RosterHandler.GetByPlayerAndYear(id, year));
         }
     }
 }

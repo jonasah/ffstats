@@ -152,29 +152,29 @@
                     @{
                         var prevWeek = 0;
 
-                        foreach (var lp in player.LineupPlayers)
+                        foreach (var re in player.RosterEntries)
                         {
                             ++prevWeek;
 
-                            if (prevWeek != lp.Week)
+                            if (prevWeek != re.Week)
                             {
-                                <td colspan="@(lp.Week-prevWeek)" />
-                                prevWeek = lp.Week;
+                                <td colspan="@(re.Week-prevWeek)" />
+                                prevWeek = re.Week;
                             }
 
                             <td class="align-center">
-                                @if (lp.Position == FFStats.Models.Enums.Position.RES)
+                                @if (re.Position == FFStats.Models.Enums.Position.RES)
                                 {
                                     <div>RES</div>
                                 }
-                                else if (lp.IsByeWeek)
+                                else if (re.IsByeWeek)
                                 {
                                     <div>Bye</div>
                                 }
                                 else
                                 {
-                                    <div>@lp.Position</div>
-                                    <div>@($"{lp.Points:0.00}")</div>
+                                    <div>@re.Position</div>
+                                    <div>@($"{re.Points:0.00}")</div>
                                 }
                             </td>
                         }
@@ -185,11 +185,11 @@
                         }
                     }
 
-                    <td class="align-center">@($"{100*player.StartPct:0.0}")</td>
+                    <td class="align-center">@($"{100 * player.StartPct:0.0}")</td>
                 </tr>
 
-                            prevPosition = player.Player.Position.ToString();
-                        }
+                prevPosition = player.Player.Position.ToString();
+            }
         }
     </tbody>
 </table>

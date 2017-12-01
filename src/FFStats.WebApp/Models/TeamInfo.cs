@@ -24,12 +24,12 @@ namespace FFStats.WebApp.Models
     public class TeamPlayerInfo
     {
         public Player Player { get; set; }
-        public List<LineupPlayer> LineupPlayers { get; set; }
+        public List<RosterEntry> RosterEntries { get; set; }
 
-        public int NumLineupWeeks { get => LineupPlayers.Count; }
-        public int NumByeWeeks { get => LineupPlayers.Count(lp => lp.IsByeWeek || lp.Position == Position.RES); }
-        public int NumBenchWeeks { get => LineupPlayers.Count(lp => lp.Position == Position.BN && !lp.IsByeWeek); }
-        public int NumPlayableWeeks { get => (NumLineupWeeks - NumByeWeeks); }
+        public int NumRosterWeeks { get => RosterEntries.Count; }
+        public int NumByeWeeks { get => RosterEntries.Count(re => re.IsByeWeek || re.Position == Position.RES); }
+        public int NumBenchWeeks { get => RosterEntries.Count(re => re.Position == Position.BN && !re.IsByeWeek); }
+        public int NumPlayableWeeks { get => (NumRosterWeeks - NumByeWeeks); }
         public int NumStartingWeeks { get => (NumPlayableWeeks - NumBenchWeeks); }
         public double StartPct { get => (NumStartingWeeks == 0 ? 0 : (double)NumStartingWeeks / NumPlayableWeeks); }
     }

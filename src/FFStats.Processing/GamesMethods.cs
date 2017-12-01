@@ -11,7 +11,7 @@ namespace FFStats.Processing
         {
             Console.WriteLine("Calculating game scores for {0} week {1}", year, week);
 
-            var totalPointsPerTeam = LineupHandler.GetTotalPointsPerTeam(year, week);
+            var totalPointsPerTeam = RosterHandler.GetTotalPointsPerTeam(year, week);
 
             foreach (var teamPoints in totalPointsPerTeam)
             {

@@ -7,8 +7,8 @@ using System.Text;
 
 namespace FFStats.Models
 {
-    [Table("LineupPlayers")]
-    public class LineupPlayer
+    [Table("Rosters")]
+    public class RosterEntry
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -22,9 +22,11 @@ namespace FFStats.Models
         public int TeamId { get; set; }
         [Required]
         public Team Team { get; set; }
+
         public int PlayerId { get; set; }
         [Required]
         public Player Player { get; set; }
+
         public Position Position { get; set; }
 
         public double? Points { get; set; }

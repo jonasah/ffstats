@@ -24,6 +24,6 @@ namespace FFStats.WebApp.Models
     {
         public Player Player { get; set; }
         public int Year { get; set; }
-        public List<LineupPlayer> LineupPlayers { get; set; }
+        public List<RosterEntry> RosterEntries { get; set; }
     }
 }

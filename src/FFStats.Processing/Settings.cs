@@ -14,7 +14,7 @@ namespace FFStats.Processing
 
         // command specific
         public string ScheduleFile { get; set; }
-        public List<string> LineupFiles { get; set; }
+        public List<string> RosterFiles { get; set; }
         public bool CalculateStandings { get; set; }
 
         public bool Parse(string[] args)
@@ -30,7 +30,7 @@ namespace FFStats.Processing
             // "add" command
             app.Command("add", (addCommand) =>
             {
-                addCommand.Description = "Add schedule or lineups";
+                addCommand.Description = "Add schedule or rosters";
                 addCommand.HelpOption(helpFlags);
 
                 var forceOption = addCommand.Option("--force", "Override existing data", CommandOptionType.NoValue, true);
@@ -59,21 +59,21 @@ namespace FFStats.Processing
                     });
                 });
 
-                // "add lineups" command
-                addCommand.Command("lineups", (addLineupsCommand) =>
+                // "add rosters" command
+                addCommand.Command("rosters", (addRostersCommand) =>
                 {
-                    addLineupsCommand.Description = "Add lineups";
-                    addLineupsCommand.HelpOption(helpFlags);
+                    addRostersCommand.Description = "Add rosters";
+                    addRostersCommand.HelpOption(helpFlags);
 
-                    var lineupFilesArgument = addLineupsCommand.Argument("files", "Lineup json files", multipleValues: true);
+                    var rosterFilesArgument = addRostersCommand.Argument("files", "Roster json files", multipleValues: true);
 
-                    addLineupsCommand.OnExecute(() =>
+                    addRostersCommand.OnExecute(() =>
                     {
-                        LineupFiles = lineupFilesArgument.Values;
+                        RosterFiles = rosterFilesArgument.Values;
 
-                        if (LineupFiles.Count == 0)
+                        if (RosterFiles.Count == 0)
                         {
-                            addLineupsCommand.SetError("No lineup files specified");
+                            addRostersCommand.SetError("No roster files specified");
                             return 1;
                         }
 
