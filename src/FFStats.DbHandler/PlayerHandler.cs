@@ -19,6 +19,14 @@ namespace FFStats.DbHandler
             return player;
         }
 
+        public static Player GetById(int id)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Players.Where(p => p.Id == id).FirstOrDefault();
+            }
+        }
+
         public static Player GetByName(string name)
         {
             using (var db = new FFStatsDbContext())

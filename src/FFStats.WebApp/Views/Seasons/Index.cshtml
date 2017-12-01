@@ -1,0 +1,34 @@
+﻿
+@{
+    ViewData["Title"] = "Seasons";
+}
+
+<h2>Seasons</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Year</th>
+            <th>Champion</th>
+            <th>2nd place</th>
+            <th>3rd place</th>
+            <th>Sacko</th>
+            <th>Reg. season champion</th>
+            <th>Highest points For</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var season in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink($"{season.Year}", "SeasonInfo", "Seasons", new { year = season.Year }, null)</td>
+                <td>@season.Champion?.Name</td>
+                <td>@season.SecondPlace?.Name</td>
+                <td>@season.ThirdPlace?.Name</td>
+                <td>@season.Sacko?.Name</td>
+                <td>@season.RegularSeasonChampion?.Name</td>
+                <td>@season.HighestPointsFor (@season.HighestPointsForTeam.Name)</td>
+            </tr>
+        }
+    </tbody>
+</table>

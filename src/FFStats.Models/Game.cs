@@ -30,5 +30,24 @@ namespace FFStats.Models
         public double? Points2 { get; set; }
 
         public bool HasValidResult { get => (Points1 != null && Points2 != null); }
+
+        public bool HasTeam(int id)
+        {
+            return Team1Id == id || Team2Id == id;
+        }
+
+        public Tuple<Team, double?> GetMyTeam(int myTeamId)
+        {
+            return (Team1Id == myTeamId ?
+                Tuple.Create(Team1, Points1) :
+                Tuple.Create(Team2, Points2));
+        }
+
+        public Tuple<Team, double?> GetOpponent(int myTeamId)
+        {
+            return (Team1Id == myTeamId ?
+                Tuple.Create(Team2, Points2) :
+                Tuple.Create(Team1, Points1));
+        }
     }
 }

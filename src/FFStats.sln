@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2008
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.Processing", "FFStats.Processing\FFStats.Processing.csproj", "{40E49540-26EB-47A4-A0C3-E5786A5BC026}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.DbHandler", "FFStats.DbHandler\FFStats.DbHandler.csproj", "{74420BD9-D6C6-47E6-AB2D-E95F888FBA2C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FFStats.PlayoffProb", "FFStats.PlayoffProb\FFStats.PlayoffProb.vcxproj", "{96B41DB7-068A-43CB-ABCC-D5CDF76B7E06}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.WebApp", "FFStats.WebApp\FFStats.WebApp.csproj", "{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{96B41DB7-068A-43CB-ABCC-D5CDF76B7E06}.Debug|Any CPU.Build.0 = Debug|x64
 		{96B41DB7-068A-43CB-ABCC-D5CDF76B7E06}.Release|Any CPU.ActiveCfg = Release|x64
 		{96B41DB7-068A-43CB-ABCC-D5CDF76B7E06}.Release|Any CPU.Build.0 = Release|x64
+		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

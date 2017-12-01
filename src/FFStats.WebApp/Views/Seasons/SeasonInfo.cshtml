@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewData["Title"] = "SeasonInfo";
+}
+
+<h2>@Model.Year</h2>
+
+<h3>Standings</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Team</th>
+            <th class="align-center">W</th>
+            <th class="align-center">L</th>
+            <th class="align-center">Pct</th>
+            <th class="align-center">Stk</th>
+            <th class="align-center">PF</th>
+            <th class="align-center">PA</th>
+            <th class="align-center">Net Pts</th>
+            <th class="align-center">Avg PF</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tr in Model.Standings)
+        {
+            <tr>
+                <td class="align-center">@tr.Rank</td>
+                <td>
+                    @Html.ActionLink($"{tr.Team.Name}", "TeamInfoSeason", "Teams", new { id = tr.TeamId, year = Model.Year }, null)
+                </td>
+                <td class="align-center">@tr.Win</td>
+                <td class="align-center">@tr.Loss</td>
+                <td class="align-center">@($"{tr.Pct:.000}")</td>
+                <td class="align-center"></td>
+                <td class="align-center">@($"{tr.PointsFor:0.00}")</td>
+                <td class="align-center">@($"{tr.PointsAgainst:0.00}")</td>
+                <td class="align-center">@($"{tr.PointsDiff:0.00}")</td>
+                <td class="align-center">@($"{tr.PointsFor / tr.GamesPlayed:0.00}")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Games</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Week</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var prevWeek = 0;
+
+            foreach (var game in Model.Games)
+            {
+                <tr>
+                    <td class="align-center">@(game.Week != prevWeek ? game.Week : "")</td>
+                    <td>@game.Team1.Name</td>
+                    <td class="align-right">@($"{game.Points1:0.00}")</td>
+                    <td class="align-right">@($"{game.Points2:0.00}")</td>
+                    <td>@game.Team2.Name</td>
+                </tr>
+
+                prevWeek = game.Week;
+            }
+        }
+    </tbody>
+
+</table>

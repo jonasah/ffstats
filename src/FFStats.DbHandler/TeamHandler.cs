@@ -19,6 +19,14 @@ namespace FFStats.DbHandler
             return team;
         }
 
+        public static Team GetById(int id)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Teams.Where(t => t.Id == id).FirstOrDefault();
+            }
+        }
+
         public static Team GetByName(string name, bool createIfNotExists = false)
         {
             if (createIfNotExists)

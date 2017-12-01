@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Players</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>Position</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink($"{player.Name}", "PlayerInfo", "players", new { id = player.Id })</td>
+                <td class="align-center">@player.Position</td>
+            </tr>
+        }
+    </tbody>
+</table>

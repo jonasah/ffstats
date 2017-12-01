@@ -7,7 +7,7 @@ namespace FFStats.DbHandler
 {
     public static class SeasonInfoHandler
     {
-        public static SeasonInfo GetSeasons(int year)
+        public static SeasonInfo GetSeason(int year)
         {
             using (var db = new FFStatsDbContext())
             {
@@ -36,6 +36,16 @@ namespace FFStats.DbHandler
                     .Include(met => met.RegularSeasonChampion)
                     .Include(met => met.HighestPointsForTeam)
                     .ToList();
+            }
+        }
+
+        public static int GetNumChampion(int teamId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.SeasonInfo
+                    .Include(si => si.Champion)
+                    .Count(si => si.Champion.Id == teamId);
             }
         }
     }

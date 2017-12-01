@@ -1,0 +1,195 @@
+﻿
+@{
+    ViewData["Title"] = "TeamInfoSeason";
+}
+
+<h2>
+    @Html.ActionLink($"{Model.Year}", "SeasonInfo", "Seasons", new { year = Model.Year }, null)
+    @Html.ActionLink($"{Model.Team.Name}", "TeamInfo", "Teams", new { id = Model.Team.Id }, null)
+</h2>
+
+<h3>Regular season</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="align-center">Week</th>
+            <th class="align-center">Rank</th>
+            <th class="align-center">W</th>
+            <th class="align-center">L</th>
+            <th class="align-center">Pct</th>
+            <th class="align-center">Stk</th>
+            <th class="align-center">PF</th>
+            <th class="align-center">PA</th>
+            <th class="align-center">Net Pts</th>
+            <th class="align-center">Avg PF</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var prevWin = 0;
+            var streak = 0;
+            var maxWeek = 0;
+
+            foreach (var wr in Model.WeekRecords)
+            {
+                if (prevWin < wr.Win)
+                {
+                    // won this week
+                    streak = (streak >= 0 ? streak + 1 : 1);
+                }
+                else
+                {
+                    // lost this week
+                    streak = (streak <= 0 ? streak - 1 : -1);
+                }
+
+                prevWin = wr.Win;
+                maxWeek = wr.Week;
+
+                <tr>
+                    <td class="align-center">@wr.Week</td>
+                    <td class="align-center">@wr.Rank</td>
+                    <td class="align-center">@wr.Win</td>
+                    <td class="align-center">@wr.Loss</td>
+                    <td class="align-center">@($"{wr.Pct:.000}")</td>
+                    <td class="align-center">@(streak > 0 ? $"W{streak}" : $"L{-streak}")</td>
+                    <td class="align-center">@($"{wr.PointsFor:0.00}")</td>
+                    <td class="align-center">@($"{wr.PointsAgainst:0.00}")</td>
+                    <td class="align-center">@($"{wr.PointsDiff:0.00}")</td>
+                    <td class="align-center">@($"{wr.PointsFor / wr.GamesPlayed:0.00}")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<h3>Head 2 Head Records</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Opponent</th>
+            <th class="align-center">Win</th>
+            <th class="align-center">Loss</th>
+            <th class="align-center">Pct</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var h2h in Model.H2HRecords)
+        {
+            <tr>
+                <td>@h2h.Opponent.Name</td>
+                <td class="align-center">@h2h.Win</td>
+                <td class="align-center">@h2h.Loss</td>
+                <td class="align-center">@($"{h2h.Pct:.000}")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Games</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Week</th>
+            <th>Opponent</th>
+            <th></th>
+            <th colspan="3" class="align-center">Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var game in Model.Games)
+            {
+                var me = game.GetMyTeam(Model.Team.Id);
+                var opponent = game.GetOpponent(Model.Team.Id);
+                var result = game.HasValidResult ? (me.Item2 > opponent.Item2 ? "Win" : "Loss") : "";
+
+                <tr>
+                    <td class="align-center">@game.Week</td>
+                    <td>@opponent.Item1.Name</td>
+                    <td class="align-center">@result</td>
+                    <td class="align-right">@($"{me.Item2:0.00}")</td>
+                    <td class="align-right">-</td>
+                    <td class="align-left">@($"{opponent.Item2:0.00}")</td>
+                </tr>
+            }
+        }
+    </tbody>
+
+</table>
+
+<h3>Players</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Position</th>
+            <th>Player</th>
+
+            @for (int week = 1; week <= maxWeek; ++week)
+            {
+                <th class="align-center">@($"{week}")</th>
+            }
+
+            <th>Start Pct</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var prevPosition = string.Empty;
+
+            foreach (var player in Model.Players)
+            {
+                var pos = (player.Player.Position.ToString() == prevPosition ? "" : player.Player.Position);
+
+                <tr>
+                    <td class="align-center">@pos</td>
+                    <td>@player.Player.Name</td>
+
+                    @{
+                        var prevWeek = 0;
+
+                        foreach (var lp in player.LineupPlayers)
+                        {
+                            ++prevWeek;
+
+                            if (prevWeek != lp.Week)
+                            {
+                                <td colspan="@(lp.Week-prevWeek)" />
+                                prevWeek = lp.Week;
+                            }
+
+                            <td class="align-center">
+                                @if (lp.Position == FFStats.Models.Enums.Position.RES)
+                                {
+                                    <div>RES</div>
+                                }
+                                else if (lp.IsByeWeek)
+                                {
+                                    <div>Bye</div>
+                                }
+                                else
+                                {
+                                    <div>@lp.Position</div>
+                                    <div>@($"{lp.Points:0.00}")</div>
+                                }
+                            </td>
+                        }
+
+                        if (prevWeek != maxWeek)
+                        {
+                            <td colspan="@(maxWeek-prevWeek)" />
+                        }
+                    }
+
+                    <td class="align-center">@($"{100*player.StartPct:0.0}")</td>
+                </tr>
+
+                            prevPosition = player.Player.Position.ToString();
+                        }
+        }
+    </tbody>
+</table>

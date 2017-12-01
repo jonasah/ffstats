@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewData["Title"] = "PlayerInfo";
+}
+
+<h2>@Model.Player.Name</h2>
+
+<div>Position: @Model.Player.Position</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="align-center">Year</th>
+            <th class="align-center">Teams</th>
+            <th class="align-center">On roster</th>
+            <th class="align-center">Started</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var year in Model.Years)
+        {
+            <tr>
+                <td class="align-center">@Html.ActionLink($"{year.Year}", "PlayerInfoSeason", "Players", new { id = Model.Player.Id, year = year.Year }, null)</td>
+                <td class="align-center">@year.NumTeams</td>
+                <td class="align-center">@year.WeeksOnRoster</td>
+                <td class="align-center">@year.WeeksStarted</td>
+            </tr>
+        }
+    </tbody>
+</table>

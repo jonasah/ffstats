@@ -1,0 +1,35 @@
+﻿
+@{
+    ViewData["Title"] = "PlayerInfoSeason";
+}
+
+<h2>
+    @Html.ActionLink($"{Model[0].Year}", "SeasonInfo", "Seasons", new { year = Model[0].Year }, null)
+    @Html.ActionLink($"{Model[0].Player.Name}", "PlayerInfo", "Players", new { id = Model[0].Player.Id }, null)
+</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="align-center">Year</th>
+            <th class="align-center">Week</th>
+            <th>Team</th>
+            <th class="align-center">Position</th>
+            <th class="align-center">Points</th>
+            <th class="align-center">Bye</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entry in Model)
+        {
+            <tr>
+                <td class="align-center">@entry.Year</td>
+                <td class="align-center">@entry.Week</td>
+                <td>@Html.ActionLink($"{entry.Team.Name}", "TeamInfo", "Teams", new { id = entry.TeamId }, null)</td>
+                <td class="align-center">@entry.Position</td>
+                <td class="align-center">@(entry.IsByeWeek ? "-" : $"{entry.Points:0.00}")</td>
+                <td class="align-center">@(entry.IsByeWeek ? "Y" : "")</td>
+            </tr>
+        }
+    </tbody>
+</table>

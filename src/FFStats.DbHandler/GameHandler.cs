@@ -41,6 +41,32 @@ namespace FFStats.DbHandler
             }
         }
 
+        public static List<Game> GetGamesByYear(int year)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Games
+                    .Where(g => g.Year == year)
+                    .OrderBy(g => g.Week)
+                    .Include(g => g.Team1)
+                    .Include(g => g.Team2)
+                    .ToList();
+            }
+        }
+
+        public static List<Game> GetGamesByYearAndTeam(int year, int teamId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Games
+                    .Where(g => g.Year == year && g.HasTeam(teamId))
+                    .OrderBy(g => g.Week)
+                    .Include(g => g.Team1)
+                    .Include(g => g.Team2)
+                    .ToList();
+            }
+        }
+
         public static void DeleteGamesInYear(int year)
         {
             using (var db = new FFStatsDbContext())
@@ -54,7 +80,7 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
-                var game = db.Games.Where(g => g.Year == year && g.Week == week && (g.Team1Id == teamId || g.Team2Id == teamId)).Single();
+                var game = db.Games.Where(g => g.Year == year && g.Week == week && g.HasTeam(teamId)).Single();
                 
                 if (game.Team1Id == teamId)
                 {
@@ -73,10 +99,9 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
-                // TODO: union of team1 and team2
                 return db.Games
                     .Where(g => g.Year == year)
-                    .Select(g => g.Team1)
+                    .SelectMany(g => new List<Team> { g.Team1, g.Team2 })
                     .Distinct()
                     .ToList();
             }

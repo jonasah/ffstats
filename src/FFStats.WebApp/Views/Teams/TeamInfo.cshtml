@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewData["Title"] = "TeamInfo";
+}
+
+<h2>@Model.Team.Name</h2>
+
+<h3>Regular Season</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="align-center">Year</th>
+            <th class="align-center">Rank</th>
+            <th class="align-center">W</th>
+            <th class="align-center">L</th>
+            <th class="align-center">Pct</th>
+            <th class="align-center">PF</th>
+            <th class="align-center">PA</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var yr in Model.YearRecords)
+        {
+            <tr>
+                <td class="align-center">
+                    @Html.ActionLink($"{yr.Year}", "TeamInfoSeason", "Teams", new { id = Model.Team.Id, year = yr.Year }, null)
+                </td>
+                <td class="align-center">@yr.Rank</td>
+                <td class="align-center">@yr.Win</td>
+                <td class="align-center">@yr.Loss</td>
+                <td class="align-center">@($"{yr.Pct:.000}")</td>
+                <td class="align-center">@($"{yr.PointsFor:0.00}")</td>
+                <td class="align-center">@($"{yr.PointsAgainst:0.00}")</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td class="align-center">Total</td>
+            <td></td>
+            <td class="align-center">@Model.CareerRecord.Win</td>
+            <td class="align-center">@Model.CareerRecord.Loss</td>
+            <td class="align-center">@($"{Model.CareerRecord.Pct:.000}")</td>
+            <td class="align-center">@($"{Model.CareerRecord.PointsFor:0.00}")</td>
+            <td class="align-center">@($"{Model.CareerRecord.PointsAgainst:0.00}")</td>
+        </tr>
+    </tfoot>
+</table>
+
+<h3>Head 2 Head Records</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Opponent</th>
+            <th class="align-center">Win</th>
+            <th class="align-center">Loss</th>
+            <th class="align-center">Pct</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var record in Model.H2HRecords)
+        {
+            <tr>
+                <td>@record.Opponent.Name</td>
+                <td class="align-center">@record.Win</td>
+                <td class="align-center">@record.Loss</td>
+                <td class="align-center">@($"{record.Pct:.000}")</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -25,7 +25,74 @@ namespace FFStats.DbHandler
                 return db.TeamRecords
                     .Where(tr => tr.Year == year && tr.Week == week)
                     .OrderBy(tr => tr.Rank)
+                    .Include(tr => tr.Team)
                     .Include(tr => tr.Head2HeadRecords)
+                    .ToList();
+            }
+        }
+
+        public static List<TeamRecord> GetLatestTeamRecords(int year)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                var maxWeek = db.TeamRecords
+                    .Where(tr => tr.Year == year)
+                    .Max(tr => tr.Week);
+
+                return GetTeamRecordsByWeek(year, maxWeek);
+            }
+        }
+
+        public static List<TeamRecord> GetTeamRecordsByTeam(int teamId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.TeamRecords
+                    .Where(tr => tr.TeamId == teamId)
+                    .OrderBy(tr => tr.Year)
+                    .Include(tr => tr.Team)
+                    .Include(tr => tr.Head2HeadRecords)
+                    .ToList();
+            }
+        }
+
+        public static List<TeamRecord> GetTeamRecordsByTeamAndYear(int teamId, int year)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.TeamRecords
+                    .Where(tr => tr.TeamId == teamId && tr.Year == year)
+                    .OrderBy(tr => tr.Week)
+                    .Include(tr => tr.Team)
+                    .Include(tr => tr.Head2HeadRecords)
+                        .ThenInclude(h2h => h2h.Opponent)
+                    .ToList();
+            }
+        }
+
+        public static List<TeamRecord> GetFinalTeamRecordsForEachYear(int teamId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.TeamRecords
+                    .Where(tr => tr.TeamId == teamId)
+                    .GroupBy(tr => tr.Year)
+                    .Select(g => g.Where(tr => tr.Week == g.Max(t => t.Week)).First())
+                    .OrderBy(tr => tr.Year)
+                    .ToList();
+            }
+        }
+
+        public static List<Head2HeadRecord> GetAccumulatedHead2HeadRecords(int teamId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Head2HeadRecords
+                    .Where(h2h => h2h.TeamId == teamId)
+                    .Include(h2h => h2h.Opponent)
+                    .GroupBy(h2h => h2h.OpponentId)
+                    .Select(g => g.Where(h2h => h2h.Week == g.Max(h2 => h2.Week)).First())
+                    .OrderBy(h2h => h2h.Opponent.Name)
                     .ToList();
             }
         }
@@ -44,6 +111,14 @@ namespace FFStats.DbHandler
             using (var db = new FFStatsDbContext())
             {
                 db.TeamRecords.AddRange(teamRecords);
+
+                // the call to AddRange above will set Team in TeamRecord as added,
+                // but since they already exist in the database we need to detach them
+                foreach (var teamRecord in teamRecords)
+                {
+                    db.Entry(teamRecord.Team).State = EntityState.Detached;
+                }
+
                 db.SaveChanges();
             }
         }
@@ -54,6 +129,33 @@ namespace FFStats.DbHandler
             {
                 return db.TeamRecords.Where(tr => tr.Year == year && tr.Week == week).FirstOrDefault() != null;
             }
+        }
+
+        public static List<int> GetYearsActive(int teamId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.TeamRecords
+                    .Where(tr => tr.TeamId == teamId)
+                    .Select(tr => tr.Year)
+                    .Distinct()
+                    .ToList();
+            }
+        }
+
+        public static TeamRecord GetCareerRecord(int teamId)
+        {
+            var yearRecords = GetFinalTeamRecordsForEachYear(teamId);
+            return yearRecords.Aggregate((total, next) =>
+            {
+                return new TeamRecord
+                {
+                    Win = total.Win + next.Win,
+                    Loss = total.Loss + next.Loss,
+                    PointsFor = total.PointsFor + next.PointsFor,
+                    PointsAgainst = total.PointsAgainst + next.PointsAgainst
+                };
+            });
         }
     }
 }
