@@ -49,18 +49,21 @@ namespace FFStats.Processing.Utils
 
         public void AddResult(Game game)
         {
-            var team1Record = GetTeamRecord(game.Team1Id);
-            team1Record.PointsFor += game.Points1.Value;
-            team1Record.PointsAgainst += game.Points2.Value;
+            var gameScore1 = game.GameScores[0];
+            var gameScore2 = game.GameScores[1];
 
-            var team2Record = GetTeamRecord(game.Team2Id);
-            team2Record.PointsFor += game.Points2.Value;
-            team2Record.PointsAgainst += game.Points1.Value;
+            var team1Record = GetTeamRecord(gameScore1.TeamId);
+            team1Record.PointsFor += gameScore1.Points.Value;
+            team1Record.PointsAgainst += gameScore2.Points.Value;
+
+            var team2Record = GetTeamRecord(gameScore2.TeamId);
+            team2Record.PointsFor += gameScore2.Points.Value;
+            team2Record.PointsAgainst += gameScore1.Points.Value;
 
             var team1VsTeam2Record = GetHead2HeadRecord(team1Record, team2Record.TeamId);
             var team2VsTeam1Record = GetHead2HeadRecord(team2Record, team1Record.TeamId);
 
-            if (game.Points1 > game.Points2)
+            if (gameScore1.Points > gameScore2.Points)
             {
                 team1Record.Win++;
                 team2Record.Loss++;

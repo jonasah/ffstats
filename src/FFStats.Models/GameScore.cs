@@ -6,8 +6,8 @@ using System.Text;
 
 namespace FFStats.Models
 {
-    [Table("PlayoffProbabilities")]
-    public class PlayoffProbability
+    [Table("GameScores")]
+    public class GameScore
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,16 +15,15 @@ namespace FFStats.Models
 
         [Range(2014, int.MaxValue)]
         public int Year { get; set; }
-        [Range(1, 14)]
+        [Range(1, 16)]
         public int Week { get; set; }
 
         public int TeamId { get; set; }
         [Required]
         public Team Team { get; set; }
 
-        [Range(0.0, 1.0)]
-        public double IncludingTiebreaker { get; set; }
-        [Range(0.0, 1.0)]
-        public double ExcludingTiebreaker { get; set; }
+        public double? Points { get; set; }
+
+        public int GameId { get; set; }
     }
 }

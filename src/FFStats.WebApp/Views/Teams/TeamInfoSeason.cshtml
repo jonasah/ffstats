@@ -103,17 +103,17 @@
         @{
             foreach (var game in Model.Games)
             {
-                var me = game.GetMyTeam(Model.Team.Id);
-                var opponent = game.GetOpponent(Model.Team.Id);
-                var result = game.HasValidResult ? (me.Item2 > opponent.Item2 ? "Win" : "Loss") : "";
+                var me = game.GetMyGameScore(Model.Team.Id);
+                var opponent = game.GetOpponentGameScore(Model.Team.Id);
+                var result = game.HasValidResult ? (me.Points > opponent.Points ? "Win" : "Loss") : "";
 
                 <tr>
                     <td class="align-center">@game.Week</td>
-                    <td>@opponent.Item1.Name</td>
+                    <td>@opponent.Team.Name</td>
                     <td class="align-center">@result</td>
-                    <td class="align-right">@($"{me.Item2:0.00}")</td>
+                    <td class="align-right">@($"{me.Points:0.00}")</td>
                     <td class="align-right">-</td>
-                    <td class="align-left">@($"{opponent.Item2:0.00}")</td>
+                    <td class="align-left">@($"{opponent.Points:0.00}")</td>
                 </tr>
             }
         }

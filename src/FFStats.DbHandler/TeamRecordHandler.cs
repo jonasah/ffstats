@@ -116,7 +116,10 @@ namespace FFStats.DbHandler
                 // but since they already exist in the database we need to detach them
                 foreach (var teamRecord in teamRecords)
                 {
-                    db.Entry(teamRecord.Team).State = EntityState.Detached;
+                    if (teamRecord.Team != null)
+                    {
+                        db.Entry(teamRecord.Team).State = EntityState.Detached;
+                    }
                 }
 
                 db.SaveChanges();

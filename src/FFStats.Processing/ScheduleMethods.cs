@@ -56,10 +56,23 @@ namespace FFStats.Processing
 
                     gamesToAdd.Add(new Game
                     {
-                        Team1Id = team1.Id,
-                        Team2Id = team2.Id,
+                        Year = schedule.Year,
                         Week = week.Week,
-                        Year = schedule.Year
+                        GameScores = new List<GameScore>
+                        {
+                            new GameScore
+                            {
+                                Year = schedule.Year,
+                                Week = week.Week,
+                                TeamId = team1.Id
+                            },
+                            new GameScore
+                            {
+                                Year = schedule.Year,
+                                Week = week.Week,
+                                TeamId = team2.Id
+                            }
+                        }
                     });
                 }
             }

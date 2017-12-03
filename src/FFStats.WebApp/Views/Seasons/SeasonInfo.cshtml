@@ -59,10 +59,10 @@
             {
                 <tr>
                     <td class="align-center">@(game.Week != prevWeek ? game.Week : "")</td>
-                    <td>@game.Team1.Name</td>
-                    <td class="align-right">@($"{game.Points1:0.00}")</td>
-                    <td class="align-right">@($"{game.Points2:0.00}")</td>
-                    <td>@game.Team2.Name</td>
+                    <td>@game.GameScores[0].Team.Name</td>
+                    <td class="align-right">@($"{game.GameScores[0].Points:0.00}")</td>
+                    <td class="align-right">@($"{game.GameScores[1].Points:0.00}")</td>
+                    <td>@game.GameScores[1].Team.Name</td>
                 </tr>
 
                 prevWeek = game.Week;

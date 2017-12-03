@@ -24,13 +24,25 @@ namespace FFStats.DbHandler.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<double?>("Points1");
+                    b.Property<int>("Week");
 
-                    b.Property<double?>("Points2");
+                    b.Property<int>("Year");
 
-                    b.Property<int>("Team1Id");
+                    b.HasKey("Id");
 
-                    b.Property<int>("Team2Id");
+                    b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("FFStats.Models.GameScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("GameId");
+
+                    b.Property<double?>("Points");
+
+                    b.Property<int>("TeamId");
 
                     b.Property<int>("Week");
 
@@ -38,11 +50,11 @@ namespace FFStats.DbHandler.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Team1Id");
+                    b.HasIndex("GameId");
 
-                    b.HasIndex("Team2Id");
+                    b.HasIndex("TeamId");
 
-                    b.ToTable("Games");
+                    b.ToTable("GameScores");
                 });
 
             modelBuilder.Entity("FFStats.Models.Head2HeadRecord", b =>
@@ -96,7 +108,8 @@ namespace FFStats.DbHandler.Migrations
 
             modelBuilder.Entity("FFStats.Models.PlayoffProbability", b =>
                 {
-                    b.Property<int>("Id");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<double>("ExcludingTiebreaker");
 
@@ -226,16 +239,16 @@ namespace FFStats.DbHandler.Migrations
                     b.ToTable("TeamRecords");
                 });
 
-            modelBuilder.Entity("FFStats.Models.Game", b =>
+            modelBuilder.Entity("FFStats.Models.GameScore", b =>
                 {
-                    b.HasOne("FFStats.Models.Team", "Team1")
-                        .WithMany()
-                        .HasForeignKey("Team1Id")
+                    b.HasOne("FFStats.Models.Game")
+                        .WithMany("GameScores")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("FFStats.Models.Team", "Team2")
+                    b.HasOne("FFStats.Models.Team", "Team")
                         .WithMany()
-                        .HasForeignKey("Team2Id")
+                        .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

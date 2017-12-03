@@ -35,8 +35,8 @@ namespace FFStats.DbHandler
             {
                 return db.Games
                     .Where(g => g.Year == year && g.Week == week)
-                    .Include(g => g.Team1)
-                    .Include(g => g.Team2)
+                    .Include(g => g.GameScores)
+                        .ThenInclude(gs => gs.Team)
                     .ToList();
             }
         }
@@ -48,8 +48,8 @@ namespace FFStats.DbHandler
                 return db.Games
                     .Where(g => g.Year == year)
                     .OrderBy(g => g.Week)
-                    .Include(g => g.Team1)
-                    .Include(g => g.Team2)
+                    .Include(g => g.GameScores)
+                        .ThenInclude(gs => gs.Team)
                     .ToList();
             }
         }
@@ -58,11 +58,15 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
+                var gameIds = db.GameScores
+                    .Where(gs => gs.Year == year && gs.TeamId == teamId)
+                    .Select(gs => gs.GameId);
+
                 return db.Games
-                    .Where(g => g.Year == year && g.HasTeam(teamId))
+                    .Include(g => g.GameScores)
+                        .ThenInclude(gs => gs.Team)
+                    .Where(g => gameIds.Contains(g.Id))
                     .OrderBy(g => g.Week)
-                    .Include(g => g.Team1)
-                    .Include(g => g.Team2)
                     .ToList();
             }
         }
@@ -80,17 +84,10 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
-                var game = db.Games.Where(g => g.Year == year && g.Week == week && g.HasTeam(teamId)).Single();
-                
-                if (game.Team1Id == teamId)
-                {
-                    game.Points1 = points;
-                }
-                else
-                {
-                    game.Points2 = points;
-                }
-
+                db.GameScores
+                    .Where(gs => gs.Year == year && gs.Week == week && gs.TeamId == teamId)
+                    .First()
+                    .Points = points;
                 db.SaveChanges();
             }
         }
@@ -99,9 +96,9 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
-                return db.Games
-                    .Where(g => g.Year == year)
-                    .SelectMany(g => new List<Team> { g.Team1, g.Team2 })
+                return db.GameScores
+                    .Where(gs => gs.Year == year)
+                    .Select(gs => gs.Team)
                     .Distinct()
                     .ToList();
             }

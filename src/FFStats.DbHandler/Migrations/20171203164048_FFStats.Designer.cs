@@ -11,27 +11,19 @@ using System;
 namespace FFStats.DbHandler.Migrations
 {
     [DbContext(typeof(FFStatsDbContext))]
-    [Migration("20171104103241_FFStats")]
+    [Migration("20171203164048_FFStats")]
     partial class FFStats
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.0-rtm-26452");
+                .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
             modelBuilder.Entity("FFStats.Models.Game", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<double?>("Points1");
-
-                    b.Property<double?>("Points2");
-
-                    b.Property<int>("Team1Id");
-
-                    b.Property<int>("Team2Id");
 
                     b.Property<int>("Week");
 
@@ -39,11 +31,31 @@ namespace FFStats.DbHandler.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Team1Id");
-
-                    b.HasIndex("Team2Id");
-
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("FFStats.Models.GameScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("GameId");
+
+                    b.Property<double?>("Points");
+
+                    b.Property<int>("TeamId");
+
+                    b.Property<int>("Week");
+
+                    b.Property<int>("Year");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("GameScores");
                 });
 
             modelBuilder.Entity("FFStats.Models.Head2HeadRecord", b =>
@@ -76,7 +88,48 @@ namespace FFStats.DbHandler.Migrations
                     b.ToTable("Head2HeadRecords");
                 });
 
-            modelBuilder.Entity("FFStats.Models.LineupPlayer", b =>
+            modelBuilder.Entity("FFStats.Models.Player", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<int>("Position");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Players");
+                });
+
+            modelBuilder.Entity("FFStats.Models.PlayoffProbability", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<double>("ExcludingTiebreaker");
+
+                    b.Property<double>("IncludingTiebreaker");
+
+                    b.Property<int>("TeamId");
+
+                    b.Property<int>("Week");
+
+                    b.Property<int>("Year");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("PlayoffProbabilities");
+                });
+
+            modelBuilder.Entity("FFStats.Models.RosterEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -101,47 +154,45 @@ namespace FFStats.DbHandler.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("LineupPlayers");
+                    b.ToTable("Rosters");
                 });
 
-            modelBuilder.Entity("FFStats.Models.Player", b =>
+            modelBuilder.Entity("FFStats.Models.SeasonInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                    b.Property<int?>("ChampionId");
 
-                    b.Property<int>("Position");
+                    b.Property<double>("HighestPointsFor");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("HighestPointsForTeamId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.Property<int?>("RegularSeasonChampionId");
 
-                    b.ToTable("Players");
-                });
+                    b.Property<int?>("SackoId");
 
-            modelBuilder.Entity("FFStats.Models.PlayoffProbability", b =>
-                {
-                    b.Property<int>("Id");
+                    b.Property<int?>("SecondPlaceId");
 
-                    b.Property<double>("ExcludingTiebreaker");
-
-                    b.Property<double>("IncludingTiebreaker");
-
-                    b.Property<int>("TeamId");
-
-                    b.Property<int>("Week");
+                    b.Property<int?>("ThirdPlaceId");
 
                     b.Property<int>("Year");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TeamId");
+                    b.HasIndex("ChampionId");
 
-                    b.ToTable("PlayoffProbabilities");
+                    b.HasIndex("HighestPointsForTeamId");
+
+                    b.HasIndex("RegularSeasonChampionId");
+
+                    b.HasIndex("SackoId");
+
+                    b.HasIndex("SecondPlaceId");
+
+                    b.HasIndex("ThirdPlaceId");
+
+                    b.ToTable("SeasonInfo");
                 });
 
             modelBuilder.Entity("FFStats.Models.Team", b =>
@@ -189,16 +240,16 @@ namespace FFStats.DbHandler.Migrations
                     b.ToTable("TeamRecords");
                 });
 
-            modelBuilder.Entity("FFStats.Models.Game", b =>
+            modelBuilder.Entity("FFStats.Models.GameScore", b =>
                 {
-                    b.HasOne("FFStats.Models.Team", "Team1")
-                        .WithMany()
-                        .HasForeignKey("Team1Id")
+                    b.HasOne("FFStats.Models.Game")
+                        .WithMany("GameScores")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("FFStats.Models.Team", "Team2")
+                    b.HasOne("FFStats.Models.Team", "Team")
                         .WithMany()
-                        .HasForeignKey("Team2Id")
+                        .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -220,7 +271,15 @@ namespace FFStats.DbHandler.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("FFStats.Models.LineupPlayer", b =>
+            modelBuilder.Entity("FFStats.Models.PlayoffProbability", b =>
+                {
+                    b.HasOne("FFStats.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("FFStats.Models.RosterEntry", b =>
                 {
                     b.HasOne("FFStats.Models.Player", "Player")
                         .WithMany()
@@ -233,12 +292,31 @@ namespace FFStats.DbHandler.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("FFStats.Models.PlayoffProbability", b =>
+            modelBuilder.Entity("FFStats.Models.SeasonInfo", b =>
                 {
-                    b.HasOne("FFStats.Models.Team", "Team")
+                    b.HasOne("FFStats.Models.Team", "Champion")
                         .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ChampionId");
+
+                    b.HasOne("FFStats.Models.Team", "HighestPointsForTeam")
+                        .WithMany()
+                        .HasForeignKey("HighestPointsForTeamId");
+
+                    b.HasOne("FFStats.Models.Team", "RegularSeasonChampion")
+                        .WithMany()
+                        .HasForeignKey("RegularSeasonChampionId");
+
+                    b.HasOne("FFStats.Models.Team", "Sacko")
+                        .WithMany()
+                        .HasForeignKey("SackoId");
+
+                    b.HasOne("FFStats.Models.Team", "SecondPlace")
+                        .WithMany()
+                        .HasForeignKey("SecondPlaceId");
+
+                    b.HasOne("FFStats.Models.Team", "ThirdPlace")
+                        .WithMany()
+                        .HasForeignKey("ThirdPlaceId");
                 });
 
             modelBuilder.Entity("FFStats.Models.TeamRecord", b =>
