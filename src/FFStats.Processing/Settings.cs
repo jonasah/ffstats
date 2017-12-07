@@ -16,6 +16,7 @@ namespace FFStats.Processing
         public string ScheduleFile { get; set; }
         public List<string> RosterFiles { get; set; }
         public bool CalculateStandings { get; set; }
+        public bool CalculatePlayoffProb { get; set; }
 
         public bool Parse(string[] args)
         {
@@ -97,6 +98,7 @@ namespace FFStats.Processing
 
                 var forceOption = calcCommand.Option("--force", "Override existing data", CommandOptionType.NoValue, true);
 
+                // "calculate standings" command
                 calcCommand.Command("standings", (calcStandingsCommand) =>
                 {
                     calcStandingsCommand.Description = "Calculate standings";
@@ -125,6 +127,39 @@ namespace FFStats.Processing
                         }
 
                         CalculateStandings = true;
+                        Force = forceOption.HasValue();
+                        return 0;
+                    });
+                });
+
+                // "calculate playoffprob" command
+                calcCommand.Command("playoffprob", (calcPlayoffProbCommand) =>
+                {
+                    calcPlayoffProbCommand.Description = "Calculate playoff probability";
+                    calcPlayoffProbCommand.HelpOption(helpFlags);
+
+                    var yearOption = calcPlayoffProbCommand.Option("-y | --year", "Year", CommandOptionType.SingleValue);
+                    var weekOption = calcPlayoffProbCommand.Option("-w | --week", "Week", CommandOptionType.SingleValue);
+
+                    calcPlayoffProbCommand.OnExecute(() =>
+                    {
+                        if (!yearOption.HasValue() || !weekOption.HasValue())
+                        {
+                            calcPlayoffProbCommand.SetError("Missing year and/or week");
+                            return 1;
+                        }
+
+                        try
+                        {
+                            Year = int.Parse(yearOption.Value());
+                            Week = int.Parse(weekOption.Value());
+                        }
+                        catch (FormatException)
+                        {
+                            calcPlayoffProbCommand.SetError("Invalid year and/or week");
+                        }
+
+                        CalculatePlayoffProb = true;
                         Force = forceOption.HasValue();
                         return 0;
                     });

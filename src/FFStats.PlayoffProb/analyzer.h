@@ -3,123 +3,122 @@
 
 #include <QtCore/QDebug>
 
-#include "database.h"
 #include "standings.h"
 #include "teaminfo.h"
 
-class Analyzer {
-public:
-  Analyzer() :
-    m_counter(0),
-    m_tiebreaker_count(0)
-  {
-    for (rank_t rank = 1; rank <= NUM_TEAMS; ++rank) {
-      for (win_t wins = 0; wins <= 14; ++wins) {
-        m_wins_per_rank[rank - 1][wins] = Q_UINT64_C(0);
+namespace ffstats::playoffprob {
+
+  struct PlayoffProbability {
+    team_t team;
+    double excl_tiebreakers;
+    double incl_tiebreakers;
+  };
+
+  class Analyzer {
+  public:
+    Analyzer() :
+      m_counter(0),
+      m_tiebreaker_count(0)
+    {
+      for (rank_t rank = 1; rank <= NUM_TEAMS; ++rank) {
+        for (win_t wins = 0; wins <= 14; ++wins) {
+          m_wins_per_rank[rank - 1][wins] = Q_UINT64_C(0);
+        }
+      }
+
+      for (team_t team = 0; team < NUM_TEAMS; ++team) {
+        m_playoff[team] = { Q_UINT64_C(0), Q_UINT64_C(0) };
       }
     }
 
-    for (team_t team = 0; team < NUM_TEAMS; ++team) {
-      m_playoff[team] = { Q_UINT64_C(0), Q_UINT64_C(0) };
-    }
-  }
+    void addOutcome(const Standings& outcome) {
+      ++m_counter;
 
-  void addOutcome(const Standings& outcome) {
-    ++m_counter;
+      for (rank_t rank = 1; rank <= NUM_TEAMS; ++rank) {
+        const auto wins = outcome.numWinsForRank(rank);
 
-    for (rank_t rank = 1; rank <= NUM_TEAMS; ++rank) {
-      const auto wins = outcome.numWinsForRank(rank);
-
-      ++m_wins_per_rank[rank - 1][wins];
-    }
-
-    if (outcome.hasTiebreaker()) {
-      ++m_tiebreaker_count;
-    }
-
-    for (team_t team = 0; team < NUM_TEAMS; ++team) {
-      if (outcome.inPlayoffs(team, false)) {
-        ++m_playoff[team].first;
+        ++m_wins_per_rank[rank - 1][wins];
       }
-      if (outcome.inPlayoffs(team, true)) {
-        ++m_playoff[team].second;
+
+      if (outcome.hasTiebreaker()) {
+        ++m_tiebreaker_count;
+      }
+
+      for (team_t team = 0; team < NUM_TEAMS; ++team) {
+        if (outcome.inPlayoffs(team, false)) {
+          ++m_playoff[team].first;
+        }
+        if (outcome.inPlayoffs(team, true)) {
+          ++m_playoff[team].second;
+        }
       }
     }
-  }
 
-  void summarize(const year_t year, const week_t week) const {
-    qDebug() << "No of outcomes:" << m_counter << endl;
+    QVector<PlayoffProbability> summarize() const {
+      qDebug() << "No of outcomes:" << m_counter << endl;
 
-    const auto tiebreaker_prob = m_tiebreaker_count / static_cast<double>(m_counter);
+      const auto tiebreaker_prob = m_tiebreaker_count / static_cast<double>(m_counter);
 
-    auto rank = 1;
+      auto rank = 1;
 
-    for (const auto& wins_array : m_wins_per_rank) {
-      qDebug().nospace() << "Wins for rank " << rank;
+      for (const auto& wins_array : m_wins_per_rank) {
+        qDebug().nospace() << "Wins for rank " << rank;
 
-      auto num_wins = 0;
+        auto num_wins = 0;
 
-      for (const auto outcomes : wins_array) {
-        if (outcomes > 0) {
-          const auto frac = outcomes / static_cast<double>(m_counter);
+        for (const auto outcomes : wins_array) {
+          if (outcomes > 0) {
+            const auto frac = outcomes / static_cast<double>(m_counter);
 
-          qDebug().nospace() << "  " << num_wins << ": " << qSetRealNumberPrecision(4) << frac << " (" << outcomes << ")";
+            qDebug().nospace() << "  " << num_wins << ": " << qSetRealNumberPrecision(4) << frac << " (" << outcomes << ")";
+          }
+
+          ++num_wins;
         }
 
-        ++num_wins;
+        ++rank;
       }
 
-      ++rank;
+      qDebug().nospace() << endl << "Tiebreaker: " << qSetRealNumberPrecision(4) << tiebreaker_prob << " (" << m_tiebreaker_count << ")";
+
+      qDebug() << endl << "-- Playoff probabilities --";
+
+      auto playoff_probs = QVector<PlayoffProbability>{};
+      team_t team_index = 0;
+
+      for (const auto& playoffs : m_playoff) {
+        const auto team_id = TeamInfo::getDatabaseId(team_index);
+        const auto playoffs_excl = playoffs.first;
+        const auto playoffs_incl = playoffs.second;
+
+        const auto tiebreaker_counter = playoffs_incl - playoffs_excl;
+
+        const auto playoffs_excl_prob = playoffs_excl / static_cast<double>(m_counter);
+        const auto playoffs_incl_prob = playoffs_incl / static_cast<double>(m_counter);
+        const auto tiebreaker_prob = tiebreaker_counter / static_cast<double>(m_counter);
+
+        qDebug() << TeamInfo::getNameForDatabaseId(team_id);
+        qDebug().nospace() << "  Excl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_excl_prob << "\t(" << playoffs_excl << ")";
+        qDebug().nospace() << "  Tiebreaker\t" << qSetRealNumberPrecision(4) << tiebreaker_prob << "\t(" << tiebreaker_counter << ')';
+        qDebug().nospace() << "  Incl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_incl_prob << "\t(" << playoffs_incl << ')';
+
+        playoff_probs.append({ team_id, playoffs_excl_prob, playoffs_incl_prob });
+
+        ++team_index;
+      }
+
+      return playoff_probs;
     }
 
-    qDebug().nospace() << endl << "Tiebreaker: " << qSetRealNumberPrecision(4) << tiebreaker_prob << " (" << m_tiebreaker_count << ")";
+  private:
+    quint64 m_counter;
 
-    qDebug() << endl << "-- Playoff probabilities --";
+    std::array<std::array<quint64, 15>, NUM_TEAMS> m_wins_per_rank;
+    quint64 m_tiebreaker_count;
 
-    // delete old probabilities for this week
-    DeleteQuery("PlayoffProbabilities", QString("Year = %1 AND Week = %2").arg(year).arg(week)).execute();
+    TeamAssociativeArray<QPair<quint64, quint64>> m_playoff;
+  };
 
-    InsertQuery query("PlayoffProbabilities");
-    team_t team_index = 0;
-
-    for (const auto& playoffs : m_playoff) {
-      const auto team_id = TeamInfo::getDatabaseId(team_index);
-      const auto playoffs_excl = playoffs.first;
-      const auto playoffs_incl = playoffs.second;
-
-      const auto tiebreaker_counter = playoffs_incl - playoffs_excl;
-
-      const auto playoffs_excl_prob = playoffs_excl / static_cast<double>(m_counter);
-      const auto playoffs_incl_prob = playoffs_incl / static_cast<double>(m_counter);
-      const auto tiebreaker_prob = tiebreaker_counter / static_cast<double>(m_counter);
-
-      qDebug() << TeamInfo::getNameForDatabaseId(team_id);
-      qDebug().nospace() << "  Excl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_excl_prob << "\t(" << playoffs_excl << ")";
-      qDebug().nospace() << "  Tiebreaker\t" << qSetRealNumberPrecision(4) << tiebreaker_prob << "\t(" << tiebreaker_counter << ')';
-      qDebug().nospace() << "  Incl. tiebreakers\t" << qSetRealNumberPrecision(4) << playoffs_incl_prob << "\t(" << playoffs_incl << ')';
-
-      query.addRow(
-      {
-        {"Week", week},
-        {"Year", year},
-        {"TeamId", team_id},
-        {"ExcludingTiebreaker", playoffs_excl_prob},
-        {"IncludingTiebreaker", playoffs_incl_prob}
-      });
-
-      ++team_index;
-    }
-
-    query.execute();
-  }
-
-private:
-  quint64 m_counter;
-
-  std::array<std::array<quint64, 15>, NUM_TEAMS> m_wins_per_rank;
-  quint64 m_tiebreaker_count;
-
-  TeamAssociativeArray<QPair<quint64, quint64>> m_playoff;
-};
+}
 
 #endif

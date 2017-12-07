@@ -27,6 +27,10 @@ namespace FFStats.Processing
             {
                 StandingsMethods.CalculateStandings(settings.Year, settings.Week, force: settings.Force);
             }
+            else if (settings.CalculatePlayoffProb)
+            {
+                PlayoffProbMethods.CalculatePlayoffProb(settings.Year, settings.Week, force: settings.Force);
+            }
 
             Console.WriteLine("DONE");
             Console.ReadLine();
