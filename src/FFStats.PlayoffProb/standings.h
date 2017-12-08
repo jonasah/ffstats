@@ -1,6 +1,7 @@
 #ifndef STANDINGS_H
 #define STANDINGS_H
 
+#include <QtCore/QHash>
 #include <QtCore/QVarLengthArray>
 
 #include "gameresult.h"
@@ -35,7 +36,7 @@ namespace ffstats::playoffprob {
       m_cache_valid = false;
     }
 
-    auto teamRank(const team_t team) const {
+    rank_t teamRank(const team_t team) const {
       rank_t rank = 1;
       for (const TeamRecord& record : records) {
         if (team == record.team) {
@@ -45,8 +46,8 @@ namespace ffstats::playoffprob {
         ++rank;
       }
 
-      qWarning() << "PERKELE";
-      return rank_t{ 0 };
+      Q_ASSERT(false);
+      return 0;
     }
 
     bool inPlayoffs(const team_t team, const bool include_tiebreakers) const {
@@ -76,7 +77,7 @@ namespace ffstats::playoffprob {
         }
       }
 
-      qWarning() << "PERKELE";
+      Q_ASSERT(false);
       return 0;
     }
 
