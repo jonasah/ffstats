@@ -7,6 +7,8 @@
 #define FFSTATS_PLAYOFFPROB_API __declspec(dllimport)
 #endif
 
+#include "typedefs.h"
+
 extern "C" {
 
   // standings input
@@ -20,12 +22,12 @@ extern "C" {
     int team;
     int win;
     int loss;
-    ApiHead2HeadRecord h2h_records[7];
+    ApiHead2HeadRecord h2h_records[NUM_TEAMS - 1];
   };
 
   struct ApiStandings {
     int week;
-    ApiTeamRecord records[8];
+    ApiTeamRecord records[NUM_TEAMS];
   };
 
   // schedule input
@@ -36,7 +38,7 @@ extern "C" {
 
   struct ApiScheduleWeek {
     int week;
-    ApiGame games[4];
+    ApiGame games[NUM_TEAMS / 2];
   };
 
   struct ApiSchedule {
@@ -51,7 +53,7 @@ extern "C" {
   };
 
   struct ApiPlayoffProbOutput {
-    ApiPlayoffProb playoff_probs[8];
+    ApiPlayoffProb playoff_probs[NUM_TEAMS];
   };
 
   FFSTATS_PLAYOFFPROB_API void Calculate(const ApiStandings& api_standings,
