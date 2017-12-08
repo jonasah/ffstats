@@ -6,6 +6,8 @@
 #include "FFStats.PlayoffProb.h"
 #include "playoffprobcalculator.h"
 
+//#define MAX_WEEKS_TO_SIMULATE 4
+
 extern "C" {
 
   void Calculate(const ApiStandings& api_standings, 
@@ -75,6 +77,15 @@ extern "C" {
         }
 
         schedule.insert(week.week, games);
+
+#ifdef MAX_WEEKS_TO_SIMULATE
+        static auto counter = 0;
+        ++counter;
+
+        if (counter == MAX_WEEKS_TO_SIMULATE) {
+          break;
+        }
+#endif
       }
     }
 

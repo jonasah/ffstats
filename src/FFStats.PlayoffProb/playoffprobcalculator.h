@@ -4,8 +4,6 @@
 #include "analyzer.h"
 #include "math.h"
 
-//#define MAX_WEEKS_TO_SIMULATE 4
-
 //#define TIME_MEASURE
 
 #ifdef TIME_MEASURE
