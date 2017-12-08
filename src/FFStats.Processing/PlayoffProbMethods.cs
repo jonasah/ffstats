@@ -102,6 +102,8 @@ namespace FFStats.Processing
             var apiStandings = GetStandings(year, week);
             var apiSchedule = GetSchedule(year);
 
+            Console.WriteLine("Calculating playoff probability for {0} week {1}", year, week);
+
             Api.Calculate(ref apiStandings, ref apiSchedule, out Api.PlayoffProbOutput apiPlayoffProbs);
 
             var playoffProbs = apiPlayoffProbs.PlayoffProbs.Select(pp =>
