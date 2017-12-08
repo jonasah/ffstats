@@ -31,7 +31,7 @@ namespace ffstats::playoffprob {
 
 #ifdef TIME_MEASURE
       const auto nsecs = std::chrono::nanoseconds{ t1 - t0 }.count();
-      qDebug().noquote() << QString("\nElapsed time: %1 s").arg(nsecs / 1e9);
+      std::cout << "Elapsed time: " << (nsecs / 1e9) << " s\n";
 #endif
 
       return summary;
