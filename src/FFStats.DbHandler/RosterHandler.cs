@@ -113,5 +113,17 @@ namespace FFStats.DbHandler
                     .ToList();
             }
         }
+
+        public static List<RosterEntry> GetByTeamAndWeek(int teamId, int year, int week)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.RosterEntries
+                    .Where(re => re.Year == year && re.Week == week && re.TeamId == teamId)
+                    .Include(re => re.Player)
+                    .OrderBy(re => re.Position)
+                    .ToList();
+            }
+        }
     }
 }

@@ -3,6 +3,8 @@
     ViewData["Title"] = "SeasonInfo";
 }
 
+@model SeasonInfo
+
 <h2>@Model.Year</h2>
 
 <h3>Standings</h3>
@@ -58,7 +60,7 @@
             foreach (var game in Model.Games)
             {
                 <tr>
-                    <td class="align-center">@(game.Week != prevWeek ? game.Week : "")</td>
+                    <td class="align-center">@(game.Week != prevWeek ? Html.ActionLink(game.Week.ToString(), "GameCenter", "Games", new { year = Model.Year, week = game.Week }) : null)</td>
                     <td>@game.GameScores[0].Team.Name</td>
                     <td class="align-right">@($"{game.GameScores[0].Points:0.00}")</td>
                     <td class="align-right">@($"{game.GameScores[1].Points:0.00}")</td>

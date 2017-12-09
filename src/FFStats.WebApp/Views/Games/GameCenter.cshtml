@@ -1,0 +1,154 @@
+﻿@{
+    ViewData["Title"] = "GameCenter";
+}
+
+@model GamesInfo
+
+@functions
+{
+    public string FormatPoints(double? points) => $"{points:0.00}";
+
+    public Tuple<int, int> GetPreviousWeek(int year, int week)
+    {
+        var prevYear = week == 1 ? year - 1 : year;
+        var prevWeek = week == 1 ? 16 : week - 1;
+        return Tuple.Create(prevYear, prevWeek);
+    }
+
+    public Tuple<int, int> GetNextWeek(int year, int week)
+    {
+        var nextYear = week == 16 ? year + 1 : year;
+        var nextWeek = week == 16 ? 1 : week + 1;
+        return Tuple.Create(nextYear, nextWeek);
+    }
+
+    public object GetPlayerLink(string name, int id)
+    {
+        return Html.ActionLink(name, "PlayerInfo", "Players", new { id = id });
+    }
+}
+
+<h2>Game Center: @($"{Model.Year} week {Model.Week}")</h2>
+
+@{ 
+    var prevWeek = GetPreviousWeek(Model.Year, Model.Week);
+    var nextWeek = GetNextWeek(Model.Year, Model.Week);
+}
+
+<div>
+    <span>@Html.ActionLink($"« {prevWeek.Item1}w{prevWeek.Item2:D2}", "GameCenter", "Games", new { year = prevWeek.Item1, week = prevWeek.Item2 })</span>
+    <span>@("«")</span>
+    <span>@($"{Model.Year}w{Model.Week:D2}")</span>
+    <span>@("»")</span>
+    <span>@Html.ActionLink($"{nextWeek.Item1}w{nextWeek.Item2:D2} »", "GameCenter", "Games", new { year = nextWeek.Item1, week = nextWeek.Item2 })</span>
+</div>
+
+@foreach (var game in Model.Games)
+{
+    var team1 = game.TeamInfos[0];
+    var team2 = game.TeamInfos[1];
+
+    var team1FontWeightClass = team1.Points > team2.Points ? string.Empty : "font-weight-normal";
+    var team2FontWeightClass = team2.Points > team1.Points ? string.Empty : "font-weight-normal";
+
+    <div>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th class="align-center @team1FontWeightClass">@team1.Team.Name</th>
+                    <th class="align-right @team1FontWeightClass">@FormatPoints(team1.Points)</th>
+                    <th class="align-right @team2FontWeightClass">@FormatPoints(team2.Points)</th>
+                    <th class="align-center @team2FontWeightClass">@team2.Team.Name</th>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="align-center">Pos</th>
+                                    <th>Player</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var rosterEntry in team1.Roster.Starters)
+                                {
+                                    <tr>
+                                        <td class="align-center">@rosterEntry.Position</td>
+                                        <td>@GetPlayerLink(rosterEntry.Player.Name, rosterEntry.Player.Id) (@rosterEntry.Player.Position)</td>
+                                        <td class="align-right">@FormatPoints(rosterEntry.Points)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                    <td colspan="2">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="align-center">Pos</th>
+                                    <th>Player</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var rosterEntry in team2.Roster.Starters)
+                                {
+                                    <tr>
+                                        <td class="align-center">@rosterEntry.Position</td>
+                                        <td>@GetPlayerLink(rosterEntry.Player.Name, rosterEntry.Player.Id) (@rosterEntry.Player.Position)</td>
+                                        <td class="align-right">@FormatPoints(rosterEntry.Points)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="align-center">Pos</th>
+                                    <th>Player</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var rosterEntry in team1.Roster.Bench)
+                                {
+                                    <tr>
+                                        <td class="align-center">@rosterEntry.Position</td>
+                                        <td>@GetPlayerLink(rosterEntry.Player.Name, rosterEntry.Player.Id) (@rosterEntry.Player.Position)</td>
+                                        <td class="align-right">@FormatPoints(rosterEntry.Points)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                    <td colspan="2">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="align-center">Pos</th>
+                                    <th>Player</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var rosterEntry in team2.Roster.Bench)
+                                {
+                                    <tr>
+                                        <td class="align-center">@rosterEntry.Position</td>
+                                        <td>@GetPlayerLink(rosterEntry.Player.Name, rosterEntry.Player.Id) (@rosterEntry.Player.Position)</td>
+                                        <td class="align-right">@FormatPoints(rosterEntry.Points)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
