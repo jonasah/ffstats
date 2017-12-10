@@ -1,5 +1,6 @@
 ﻿using FFStats.DbHandler;
 using FFStats.Models;
+using FFStats.Models.Enums;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,7 @@ namespace FFStats.Processing
                 Console.WriteLine(" Adding roster for {0}", roster.Team);
 
                 var team = TeamHandler.GetByName(roster.Team);
+                var teamRoster = new List<RosterEntry>();
 
                 foreach (var entry in roster.Entries)
                 {
@@ -64,7 +66,7 @@ namespace FFStats.Processing
                         Console.WriteLine("Position mismatch for {0} in {1} w{2}: {3} != {4}", player.Name, rosters.Year, rosters.Week, player.Position, entry.PlayerPosition);
                     }
 
-                    entriesToAdd.Add(new RosterEntry
+                    teamRoster.Add(new RosterEntry
                     {
                         Year = rosters.Year,
                         Week = rosters.Week,
@@ -75,6 +77,10 @@ namespace FFStats.Processing
                         IsByeWeek = entry.IsByeWeek
                     });
                 }
+
+                ValidateStartingRoster(teamRoster);
+
+                entriesToAdd.AddRange(teamRoster);
             }
 
             RosterHandler.Add(entriesToAdd);
@@ -87,6 +93,31 @@ namespace FFStats.Processing
             foreach (var rosterFile in rosterFiles)
             {
                 AddFromFile(rosterFile, force: force);
+            }
+        }
+
+        private static void ValidateStartingRoster(List<RosterEntry> roster)
+        {
+            ValidateStartersAtPosition(roster, Position.QB, 1);
+            ValidateStartersAtPosition(roster, Position.RB, 2);
+            ValidateStartersAtPosition(roster, Position.WR, 2);
+            ValidateStartersAtPosition(roster, Position.TE, 1);
+            ValidateStartersAtPosition(roster, Position.FLX, 1);
+            ValidateStartersAtPosition(roster, Position.K, 1);
+            ValidateStartersAtPosition(roster, Position.DEF, 1);
+        }
+
+        private static void ValidateStartersAtPosition(List<RosterEntry> roster, Position position, int numStartersAtPosition)
+        {
+            var numEntries = roster.Count(re => re.Position == position);
+
+            if (numEntries > numStartersAtPosition)
+            {
+                throw new ArgumentException($"Too many starters at {position}: {numEntries}");
+            }
+            else if (numEntries < numStartersAtPosition)
+            {
+                Console.WriteLine($"WARNING: Too few starters at {position}: {numEntries} (this might not be an error)");
             }
         }
     }
