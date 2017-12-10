@@ -93,7 +93,7 @@ namespace FFStats.Processing
             // "calculate" command
             app.Command("calculate", (calcCommand) =>
             {
-                calcCommand.Description = "Calculate standings";
+                calcCommand.Description = "Calculate standings or playoff probability";
                 calcCommand.HelpOption(helpFlags);
 
                 var forceOption = calcCommand.Option("--force", "Override existing data", CommandOptionType.NoValue, true);
