@@ -12,6 +12,17 @@ namespace FFStats.Processing
 {
     static class RostersMethods
     {
+        // key: player position, value: list of valid roster positions
+        private static readonly Dictionary<Position, List<Position>> ValidRosterPositions = new Dictionary<Position, List<Position>>()
+            {
+                { Position.QB, new List<Position> { Position.QB, Position.BN, Position.RES } },
+                { Position.RB, new List<Position> { Position.RB, Position.FLX, Position.BN, Position.RES } },
+                { Position.WR, new List<Position> { Position.WR, Position.FLX, Position.BN, Position.RES } },
+                { Position.TE, new List<Position> { Position.TE, Position.BN, Position.RES } },
+                { Position.K, new List<Position> { Position.K, Position.BN, Position.RES } },
+                { Position.DEF, new List<Position> { Position.DEF, Position.BN } }
+            };
+
         public static void AddFromFile(string rosterFile, bool force = false)
         {
             if (string.IsNullOrEmpty(rosterFile))
@@ -72,13 +83,14 @@ namespace FFStats.Processing
                         Week = rosters.Week,
                         TeamId = team.Id,
                         PlayerId = player.Id,
+                        Player = player,
                         Position = entry.RosterPosition,
                         Points = entry.Points,
                         IsByeWeek = entry.IsByeWeek
                     });
                 }
 
-                ValidateStartingRoster(teamRoster);
+                ValidateRoster(teamRoster);
 
                 entriesToAdd.AddRange(teamRoster);
             }
@@ -96,18 +108,20 @@ namespace FFStats.Processing
             }
         }
 
-        private static void ValidateStartingRoster(List<RosterEntry> roster)
+        private static void ValidateRoster(List<RosterEntry> roster)
         {
-            ValidateStartersAtPosition(roster, Position.QB, 1);
-            ValidateStartersAtPosition(roster, Position.RB, 2);
-            ValidateStartersAtPosition(roster, Position.WR, 2);
-            ValidateStartersAtPosition(roster, Position.TE, 1);
-            ValidateStartersAtPosition(roster, Position.FLX, 1);
-            ValidateStartersAtPosition(roster, Position.K, 1);
-            ValidateStartersAtPosition(roster, Position.DEF, 1);
+            ValidateRosterPositions(roster);
+
+            ValidateNumStartersAtPosition(roster, Position.QB, 1);
+            ValidateNumStartersAtPosition(roster, Position.RB, 2);
+            ValidateNumStartersAtPosition(roster, Position.WR, 2);
+            ValidateNumStartersAtPosition(roster, Position.TE, 1);
+            ValidateNumStartersAtPosition(roster, Position.FLX, 1);
+            ValidateNumStartersAtPosition(roster, Position.K, 1);
+            ValidateNumStartersAtPosition(roster, Position.DEF, 1);
         }
 
-        private static void ValidateStartersAtPosition(List<RosterEntry> roster, Position position, int numStartersAtPosition)
+        private static void ValidateNumStartersAtPosition(List<RosterEntry> roster, Position position, int numStartersAtPosition)
         {
             var numEntries = roster.Count(re => re.Position == position);
 
@@ -118,6 +132,17 @@ namespace FFStats.Processing
             else if (numEntries < numStartersAtPosition)
             {
                 Console.WriteLine($"WARNING: Too few starters at {position}: {numEntries} (this might not be an error)");
+            }
+        }
+
+        private static void ValidateRosterPositions(List<RosterEntry> roster)
+        {
+            foreach (var entry in roster)
+            {
+                if (!ValidRosterPositions[entry.Player.Position].Contains(entry.Position))
+                {
+                    throw new ArgumentException($"Invalid roster position for {entry.Player.Name} ({entry.Player.Position}): {entry.Position}");
+                }
             }
         }
     }

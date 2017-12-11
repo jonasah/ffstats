@@ -26,6 +26,17 @@ namespace FFStats.DbHandler
             using (var db = new FFStatsDbContext())
             {
                 db.RosterEntries.AddRange(entries);
+
+                // the call to AddRange above will set Player in RosterEntry as added,
+                // but since they already exist in the database we need to detach them
+                foreach (var entry in entries)
+                {
+                    if (entry.Player != null)
+                    {
+                        db.Entry(entry.Player).State = EntityState.Detached;
+                    }
+                }
+
                 db.SaveChanges();
             }
         }
