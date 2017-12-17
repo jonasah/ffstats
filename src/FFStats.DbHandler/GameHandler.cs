@@ -111,5 +111,17 @@ namespace FFStats.DbHandler
                 return db.Games.Where(g => g.Year == year).FirstOrDefault() != null;
             }
         }
+
+        public static List<int> GetWeeksInYear(int year)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Games
+                    .Where(g => g.Year == year)
+                    .Select(g => g.Week)
+                    .Distinct()
+                    .ToList();
+            }
+        }
     }
 }

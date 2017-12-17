@@ -19,18 +19,12 @@ namespace FFStats.Processing
 
             var schedule = JsonConvert.DeserializeObject<Models.Import.Schedule>(File.ReadAllText(scheduleFile));
 
-            var yearExists = GameHandler.YearExists(schedule.Year);
+            var weeksInDb = GameHandler.GetWeeksInYear(schedule.Year);
 
-            if (yearExists)
+            if (weeksInDb.Count > 0 && force)
             {
-                if (force)
-                {
-                    GameHandler.DeleteGamesInYear(schedule.Year);
-                }
-                else
-                {
-                    return;
-                }
+                GameHandler.DeleteGamesInYear(schedule.Year);
+                weeksInDb.Clear();
             }
 
             var teams = TeamHandler.GetAllTeams().ToDictionary(t => t.Name);
@@ -38,6 +32,12 @@ namespace FFStats.Processing
 
             foreach (var week in schedule.Weeks)
             {
+                if (weeksInDb.Contains(week.Week))
+                {
+                    // this week already exists in database
+                    continue;
+                }
+
                 foreach (var game in week.Games)
                 {
                     if (!teams.ContainsKey(game.Team1))
