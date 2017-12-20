@@ -3,6 +3,8 @@
     ViewData["Title"] = "PlayerInfoSeason";
 }
 
+@model List<FFStats.Models.RosterEntry>
+
 <h2>
     @Html.ActionLink($"{Model[0].Year}", "SeasonInfo", "Seasons", new { year = Model[0].Year }, null)
     @Html.ActionLink($"{Model[0].Player.Name}", "PlayerInfo", "Players", new { id = Model[0].Player.Id }, null)
