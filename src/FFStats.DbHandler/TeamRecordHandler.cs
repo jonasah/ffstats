@@ -148,6 +148,7 @@ namespace FFStats.DbHandler
                     .Where(tr => tr.TeamId == teamId)
                     .Select(tr => tr.Year)
                     .Distinct()
+                    .OrderBy(y => y)
                     .ToList();
             }
         }
