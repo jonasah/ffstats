@@ -55,7 +55,10 @@ namespace FFStats.WebApp.Controllers
         public IActionResult TeamInfoSeason(int id, int year)
         {
             var weekRecords = TeamRecordHandler.GetTeamRecordsByTeamAndYear(id, year);
-            var h2hRecords = weekRecords.Last().Head2HeadRecords.OrderBy(h2h => h2h.Opponent.Name).ToList();
+            var h2hRecords = weekRecords.Last().Head2HeadRecords
+                .Where(h2h => h2h.GamesPlayed > 0)
+                .OrderBy(h2h => h2h.Opponent.Name)
+                .ToList();
             var games = GameHandler.GetGamesByYearAndTeam(year, id);
             var players = RosterHandler.GetByTeamAndYearGroupedByPlayer(id, year).Select(list =>
             {
