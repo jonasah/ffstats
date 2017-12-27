@@ -91,7 +91,7 @@ namespace FFStats.ConvertRoster
 
                     // extract player name and position from player line
                     // (assume that player name ends with lowercase character)
-                    var playerMatch = Regex.Match(playerLine, @"([A-Za-z \.-]+[a-z])([A-Z]{1,3})\s");
+                    var playerMatch = Regex.Match(playerLine, @"([A-Za-z0-9' \.-]+[a-z])([A-Z]{1,3})\s");
                     entry.PlayerName = playerMatch.Groups[1].Value;
                     entry.PlayerPosition = Enum.Parse<Position>(playerMatch.Groups[2].Value);
 
