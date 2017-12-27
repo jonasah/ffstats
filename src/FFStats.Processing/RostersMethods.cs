@@ -100,11 +100,13 @@ namespace FFStats.Processing
             GamesMethods.CalculateGameScores(rosters.Year, rosters.Week);
         }
 
-        public static void AddFromFiles(List<string> rosterFiles, bool force = false)
+        public static void AddFromDirectory(string directory, bool force = false)
         {
-            foreach (var rosterFile in rosterFiles)
+            var files = Directory.EnumerateFiles(directory, "*.json");
+
+            foreach (var file in files)
             {
-                AddFromFile(rosterFile, force: force);
+                AddFromFile(file);
             }
         }
 

@@ -19,9 +19,13 @@ namespace FFStats.Processing
             {
                 ScheduleMethods.Add(settings.ScheduleFile, force: settings.Force);
             }
-            else if (settings.RosterFiles != null)
+            else if (settings.RosterFile != null)
             {
-                RostersMethods.AddFromFiles(settings.RosterFiles, force: settings.Force);
+                RostersMethods.AddFromFile(settings.RosterFile, force: settings.Force);
+            }
+            else if (settings.RosterDirectory != null)
+            {
+                RostersMethods.AddFromDirectory(settings.RosterDirectory, force: settings.Force);
             }
             else if (settings.CalculateStandings)
             {

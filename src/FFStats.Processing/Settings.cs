@@ -14,7 +14,8 @@ namespace FFStats.Processing
 
         // command specific
         public string ScheduleFile { get; set; }
-        public List<string> RosterFiles { get; set; }
+        public string RosterFile { get; set; }
+        public string RosterDirectory { get; set; }
         public bool CalculateStandings { get; set; }
         public bool CalculatePlayoffProb { get; set; }
 
@@ -66,13 +67,20 @@ namespace FFStats.Processing
                     addRostersCommand.Description = "Add rosters";
                     addRostersCommand.HelpOption(helpFlags);
 
-                    var rosterFilesArgument = addRostersCommand.Argument("files", "Roster json files", multipleValues: true);
+                    var rosterFileOption = addRostersCommand.Option("-f | --file", "Roster json file", CommandOptionType.SingleValue);
+                    var rosterDirectoryOption = addRostersCommand.Option("-d | --directory", "Roster json directory", CommandOptionType.SingleValue);
 
                     addRostersCommand.OnExecute(() =>
                     {
-                        RosterFiles = rosterFilesArgument.Values;
-
-                        if (RosterFiles.Count == 0)
+                        if (rosterFileOption.HasValue())
+                        {
+                            RosterFile = rosterFileOption.Value();
+                        }
+                        else if (rosterDirectoryOption.HasValue())
+                        {
+                            RosterDirectory = rosterDirectoryOption.Value();
+                        }
+                        else
                         {
                             addRostersCommand.SetError("No roster files specified");
                             return 1;
