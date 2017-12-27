@@ -118,6 +118,14 @@ namespace FFStats.Processing.Utils
             TeamRecords.ForEach(tr => tr.Rank = rank++);
         }
 
+        public TeamRecord GetHighestPointsForRecord()
+        {
+            return TeamRecords.Aggregate((acc, tr) =>
+            {
+                return acc.PointsFor > tr.PointsFor ? acc : tr;
+            });
+        }
+
         private TeamRecord GetTeamRecord(int teamId)
         {
             return TeamRecords.Where(tr => tr.TeamId == teamId).Single();

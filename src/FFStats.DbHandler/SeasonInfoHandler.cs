@@ -18,6 +18,15 @@ namespace FFStats.DbHandler
             return seasonInfo;
         }
 
+        public static void Update(SeasonInfo seasonInfo)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                db.SeasonInfo.Update(seasonInfo);
+                db.SaveChanges();
+            }
+        }
+
         public static SeasonInfo GetSeason(int year)
         {
             using (var db = new FFStatsDbContext())

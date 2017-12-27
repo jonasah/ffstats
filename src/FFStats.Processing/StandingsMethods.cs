@@ -56,6 +56,21 @@ namespace FFStats.Processing
 
             TeamRecordHandler.Add(newStandings.TeamRecords);
 
+            // update season info
+            var seasonInfo = SeasonInfoHandler.GetSeason(year);
+
+            var highestPointsForRecord = newStandings.GetHighestPointsForRecord();
+            seasonInfo.HighestPointsFor = highestPointsForRecord.PointsFor;
+            seasonInfo.HighestPointsForTeamId = highestPointsForRecord.TeamId;
+            seasonInfo.HighestPointsForTeam = highestPointsForRecord.Team;
+
+            if (week == 14)
+            {
+                seasonInfo.RegularSeasonChampionId = newStandings.TeamRecords[0].TeamId;
+            }
+
+            SeasonInfoHandler.Update(seasonInfo);
+
             return newStandings;
         }
     }
