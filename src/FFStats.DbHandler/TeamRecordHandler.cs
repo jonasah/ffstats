@@ -35,9 +35,15 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
-                var maxWeek = db.TeamRecords
-                    .Where(tr => tr.Year == year)
-                    .Max(tr => tr.Week);
+                var teamRecords = db.TeamRecords
+                    .Where(tr => tr.Year == year);
+
+                if (teamRecords.Count() == 0)
+                {
+                    return new List<TeamRecord>();
+                }
+
+                var maxWeek = teamRecords.Max(tr => tr.Week);
 
                 return GetTeamRecordsByWeek(year, maxWeek);
             }

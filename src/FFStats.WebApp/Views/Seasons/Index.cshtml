@@ -29,7 +29,7 @@
                 <td>@season.ThirdPlace?.Name</td>
                 <td>@season.Sacko?.Name</td>
                 <td>@season.RegularSeasonChampion?.Name</td>
-                <td>@($"{season.HighestPointsFor:.00}") (@season.HighestPointsForTeam.Name)</td>
+                <td>@($"{season.HighestPointsFor:.00}") (@season.HighestPointsForTeam?.Name)</td>
             </tr>
         }
     </tbody>

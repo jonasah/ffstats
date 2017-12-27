@@ -78,6 +78,14 @@ namespace FFStats.Processing
             }
 
             GameHandler.AddGames(gamesToAdd);
+
+            if (SeasonInfoHandler.GetSeason(schedule.Year) == null)
+            {
+                SeasonInfoHandler.Add(new SeasonInfo
+                {
+                    Year = schedule.Year
+                });
+            }
         }
     }
 }

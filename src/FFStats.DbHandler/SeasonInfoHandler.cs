@@ -7,6 +7,17 @@ namespace FFStats.DbHandler
 {
     public static class SeasonInfoHandler
     {
+        public static SeasonInfo Add(SeasonInfo seasonInfo)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                db.SeasonInfo.Add(seasonInfo);
+                db.SaveChanges();
+            }
+
+            return seasonInfo;
+        }
+
         public static SeasonInfo GetSeason(int year)
         {
             using (var db = new FFStatsDbContext())
