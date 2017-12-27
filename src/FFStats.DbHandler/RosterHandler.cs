@@ -125,6 +125,20 @@ namespace FFStats.DbHandler
             }
         }
 
+        // tuple: num teams, num weeks on roster, num weeks started
+        public static Tuple<int, int, int> GetStatsForPlayer(int playerId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                var playerEntries = db.RosterEntries.Where(re => re.PlayerId == playerId);
+                var numTeams = playerEntries.Select(re => re.TeamId).Distinct().Count();
+                var numWeeksOnRoster = playerEntries.Count();
+                var numWeeksStarted = playerEntries.Count(re => re.Position <= Position.FLX);
+
+                return Tuple.Create(numTeams, numWeeksOnRoster, numWeeksStarted);
+            }
+        }
+
         public static List<RosterEntry> GetByTeamAndWeek(int teamId, int year, int week)
         {
             using (var db = new FFStatsDbContext())

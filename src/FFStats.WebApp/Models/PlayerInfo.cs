@@ -26,4 +26,12 @@ namespace FFStats.WebApp.Models
         public int Year { get; set; }
         public List<RosterEntry> RosterEntries { get; set; }
     }
+
+    public class PlayerCareerInfo
+    {
+        public Player Player { get; set; }
+        public int NumTeams { get; set; }
+        public int WeeksOnRoster { get; set; }
+        public int WeeksStarted { get; set; }
+    }
 }

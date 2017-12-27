@@ -3,7 +3,7 @@
     ViewData["Title"] = "Index";
 }
 
-@model List<FFStats.Models.Player>
+@model List<PlayerCareerInfo>
 
 <h2>Players</h2>
 
@@ -12,14 +12,20 @@
         <tr>
             <th>Player</th>
             <th>Position</th>
+            <th class="align-center">Teams</th>
+            <th class="align-center">On roster</th>
+            <th class="align-center">Started</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var player in Model)
         {
             <tr>
-                <td>@Html.ActionLink($"{player.Name}", "PlayerInfo", "players", new { id = player.Id })</td>
-                <td class="align-center">@player.Position</td>
+                <td>@Html.ActionLink($"{player.Player.Name}", "PlayerInfo", "players", new { id = player.Player.Id })</td>
+                <td class="align-center">@player.Player.Position</td>
+                <td class="align-center">@player.NumTeams</td>
+                <td class="align-center">@player.WeeksOnRoster</td>
+                <td class="align-center">@player.WeeksStarted</td>
             </tr>
         }
     </tbody>

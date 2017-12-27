@@ -14,8 +14,21 @@ namespace FFStats.WebApp.Controllers
         [Route("")]
         public IActionResult Index()
         {
-            var players = PlayerHandler.GetAll();
-            players.Sort((p1, p2) => p1.Name.CompareTo(p2.Name));
+            var players = PlayerHandler.GetAll()
+                .OrderBy(p => p.Name)
+                .Select(p =>
+                {
+                    var stats = RosterHandler.GetStatsForPlayer(p.Id);
+
+                    return new PlayerCareerInfo
+                    {
+                        Player = p,
+                        NumTeams = stats.Item1,
+                        WeeksOnRoster = stats.Item2,
+                        WeeksStarted = stats.Item3
+                    };
+                })
+                .ToList();
 
             return View(players);
         }
