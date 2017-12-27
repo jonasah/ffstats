@@ -1,18 +1,22 @@
-﻿using FFStats.Models;
-using FFStats.Models.Enums;
-using System;
+﻿using FFStats.Models.Enums;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Collections.Generic;
-using System.Text;
 
 namespace FFStats.Models.Import
 {
     public class RosterEntry
     {
         public string PlayerName { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public Position PlayerPosition { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
         public Position RosterPosition { get; set; }
         public double? Points { get; set; }
         public bool IsByeWeek { get; set; } = false;
+
+        // only serialize IsByeWeek if set
+        public bool ShouldSerializeIsByeWeek() => IsByeWeek;
     }
 
     public class Roster
