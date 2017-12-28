@@ -12,10 +12,14 @@ namespace FFStats.Processing
         public int Week { get; set; }
         public bool Force { get; set; }
 
-        // command specific
+        // add commands
         public string ScheduleFile { get; set; }
         public string RosterFile { get; set; }
         public string RosterDirectory { get; set; }
+        public string PlayoffProbFile { get; set; }
+        public string PlayoffProbDirectory { get; set; }
+
+        // calculate commands
         public bool CalculateStandings { get; set; }
         public bool CalculatePlayoffProb { get; set; }
 
@@ -83,6 +87,37 @@ namespace FFStats.Processing
                         else
                         {
                             addRostersCommand.SetError("No roster files specified");
+                            return 1;
+                        }
+
+                        Force = forceOption.HasValue();
+
+                        return 0;
+                    });
+                });
+
+                // "add playoff-prob" command
+                addCommand.Command("playoff-prob", (addPlayoffProbCommand) =>
+                {
+                    addPlayoffProbCommand.Description = "Add playoff probabilities";
+                    addPlayoffProbCommand.HelpOption(helpFlags);
+
+                    var playoffProbFileOption = addPlayoffProbCommand.Option("-f | --file", "JSON file", CommandOptionType.SingleValue);
+                    var playoffProbDirectoryOption = addPlayoffProbCommand.Option("-d | --directory", "Directory containing JSON files", CommandOptionType.SingleValue);
+
+                    addPlayoffProbCommand.OnExecute(() =>
+                    {
+                        if (playoffProbFileOption.HasValue())
+                        {
+                            PlayoffProbFile = playoffProbFileOption.Value();
+                        }
+                        else if (playoffProbDirectoryOption.HasValue())
+                        {
+                            PlayoffProbDirectory = playoffProbDirectoryOption.Value();
+                        }
+                        else
+                        {
+                            addPlayoffProbCommand.SetError("No file or directory specified");
                             return 1;
                         }
 

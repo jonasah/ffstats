@@ -1,7 +1,10 @@
 ﻿using FFStats.DbHandler;
 using FFStats.Models;
 using FFStats.Processing.Utils;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -83,6 +86,68 @@ namespace FFStats.Processing
 
     public static class PlayoffProbMethods
     {
+        public static void AddFromFile(string file, bool force = false)
+        {
+            if (string.IsNullOrEmpty(file))
+            {
+                return;
+            }
+
+            Console.WriteLine($"Adding playoff probabilities from: {file}");
+
+            var playoffProbs = JsonConvert.DeserializeObject<Models.Import.PlayoffProbabilities>(File.ReadAllText(file));
+
+            var weekExists = PlayoffProbabilityHandler.WeekExists(playoffProbs.Year, playoffProbs.Week);
+
+            if (weekExists)
+            {
+                if (force)
+                {
+                    PlayoffProbabilityHandler.DeleteWeek(playoffProbs.Year, playoffProbs.Week);
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            var teams = TeamHandler.GetAllTeams();
+            var playoffProbsToAdd = new List<PlayoffProbability>();
+
+            foreach (var playoffProb in playoffProbs.Probability)
+            {
+                Console.WriteLine($" Adding playoff prob for {playoffProb.Team}");
+
+                if (playoffProb.ExcludingTiebreakers > playoffProb.IncludingTiebreakers)
+                {
+                    throw new ArgumentException($"Excluding ({playoffProb.ExcludingTiebreakers}) > Including ({playoffProb.IncludingTiebreakers})");
+                }
+
+                var team = teams.Find(t => t.Name == playoffProb.Team);
+
+                playoffProbsToAdd.Add(new PlayoffProbability
+                {
+                    Year = playoffProbs.Year,
+                    Week = playoffProbs.Week,
+                    TeamId = team.Id,
+                    IncludingTiebreaker = playoffProb.IncludingTiebreakers,
+                    ExcludingTiebreaker = playoffProb.ExcludingTiebreakers
+                });
+            }
+
+            PlayoffProbabilityHandler.Add(playoffProbsToAdd);
+        }
+
+        public static void AddFromDirectory(string directory, bool force = false)
+        {
+            var files = Directory.EnumerateFiles(directory, "*.json");
+
+            foreach (var file in files)
+            {
+                AddFromFile(file, force: force);
+            }
+        }
+
         public static void CalculatePlayoffProb(int year, int week, bool force = false)
         {
             var exists = PlayoffProbabilityHandler.WeekExists(year, week);

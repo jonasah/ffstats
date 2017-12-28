@@ -27,6 +27,14 @@ namespace FFStats.Processing
             {
                 RostersMethods.AddFromDirectory(settings.RosterDirectory, force: settings.Force);
             }
+            else if (settings.PlayoffProbFile != null)
+            {
+                PlayoffProbMethods.AddFromFile(settings.PlayoffProbFile, force: settings.Force);
+            }
+            else if (settings.PlayoffProbDirectory != null)
+            {
+                PlayoffProbMethods.AddFromDirectory(settings.PlayoffProbDirectory, force: settings.Force);
+            }
             else if (settings.CalculateStandings)
             {
                 StandingsMethods.CalculateStandings(settings.Year, settings.Week, force: settings.Force);
