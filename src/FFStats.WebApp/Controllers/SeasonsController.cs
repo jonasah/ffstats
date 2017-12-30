@@ -17,7 +17,7 @@ namespace FFStats.WebApp.Controllers
         [Route("{year}")]
         public IActionResult SeasonInfo(int year)
         {
-            var teamRecords = TeamRecordHandler.GetLatestTeamRecords(year);
+            var teamRecords = TeamRecordHandler.GetLatestRegularSeasonTeamRecords(year);
             var games = GameHandler.GetGamesByYear(year);
 
             return View(new SeasonInfo

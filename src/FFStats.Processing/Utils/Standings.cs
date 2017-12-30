@@ -1,30 +1,36 @@
 ﻿using FFStats.DbHandler;
 using FFStats.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace FFStats.Processing.Utils
 {
-    class Standings
+    abstract class Standings
     {
-        public List<TeamRecord> TeamRecords { get; private set; }
+        public List<TeamRecord> TeamRecords { get; protected set; }
 
-        private Standings(List<TeamRecord> teamRecords)
+        protected Standings(List<TeamRecord> teamRecords)
         {
-            this.TeamRecords = teamRecords;
+            TeamRecords = teamRecords;
         }
 
-        public void SetWeek(int week)
+        protected Standings(Standings prevStandings)
+        {
+            TeamRecords = prevStandings.TeamRecords;
+
+            AdvanceWeek();
+            SetIdsToZero();
+        }
+
+        private void AdvanceWeek()
         {
             foreach (var teamRecord in TeamRecords)
             {
-                teamRecord.Week = week;
+                ++teamRecord.Week;
 
                 foreach (var h2hRecord in teamRecord.Head2HeadRecords)
                 {
-                    h2hRecord.Week = week;
+                    ++h2hRecord.Week;
                 }
             }
         }
@@ -34,7 +40,7 @@ namespace FFStats.Processing.Utils
             return TeamRecords.Count > 0;
         }
 
-        public void SetIdsToZero()
+        private void SetIdsToZero()
         {
             foreach (var teamRecord in TeamRecords)
             {
@@ -47,7 +53,7 @@ namespace FFStats.Processing.Utils
             }
         }
 
-        public void AddResult(Game game)
+        public virtual void AddResult(Game game)
         {
             var gameScore1 = game.GameScores[0];
             var gameScore2 = game.GameScores[1];
@@ -81,42 +87,7 @@ namespace FFStats.Processing.Utils
             }
         }
 
-        public void SortStandings()
-        {
-            // sort by percentage first
-            TeamRecords.Sort((tr1, tr2) => tr2.Pct.CompareTo(tr1.Pct));
-
-            // divide into sub-standings where each has the same percentage
-            var subStandings = new List<SubStandings>
-            {
-                new SubStandings(TeamRecords.First())
-            };
-
-            for (int i = 1; i < TeamRecords.Count; ++i)
-            {
-                var team1 = TeamRecords[i-1];
-                var team2 = TeamRecords[i];
-
-                if (Math.FuzzyCompareEqual(team1.Pct, team2.Pct))
-                {
-                    subStandings.Last().Add(team2);
-                }
-                else
-                {
-                    subStandings.Add(new SubStandings(team2));
-                }
-            }
-
-            // sort each sub-standings
-            subStandings.ForEach(s => s.SortSubStandings());
-
-            // merge sub-standings into final order
-            TeamRecords = subStandings.SelectMany(s => s.TeamRecords).ToList();
-
-            // assign rank
-            var rank = 1;
-            TeamRecords.ForEach(tr => tr.Rank = rank++);
-        }
+        public abstract void SortStandings();
 
         public TeamRecord GetHighestPointsForRecord()
         {
@@ -126,14 +97,14 @@ namespace FFStats.Processing.Utils
             });
         }
 
-        private TeamRecord GetTeamRecord(int teamId)
+        protected TeamRecord GetTeamRecord(int teamId)
         {
-            return TeamRecords.Where(tr => tr.TeamId == teamId).Single();
+            return TeamRecords.Where(tr => tr.TeamId == teamId).First();
         }
 
-        private Head2HeadRecord GetHead2HeadRecord(TeamRecord teamRecord, int opponentId)
+        protected Head2HeadRecord GetHead2HeadRecord(TeamRecord teamRecord, int opponentId)
         {
-            return teamRecord.Head2HeadRecords.Where(h2h => h2h.OpponentId == opponentId).Single();
+            return teamRecord.Head2HeadRecords.Where(h2h => h2h.OpponentId == opponentId).First();
         }
 
         public static Standings GetStandings(int year, int week)
@@ -169,8 +140,13 @@ namespace FFStats.Processing.Utils
             {
                 teamRecords = TeamRecordHandler.GetTeamRecordsByWeek(year, week);
             }
-            
-            return new Standings(teamRecords);
+
+            if (week <= 14)
+            {
+                return new RegularSeasonStandings(teamRecords);
+            }
+
+            return new PlayoffStandings(teamRecords);
         }
     }
 }

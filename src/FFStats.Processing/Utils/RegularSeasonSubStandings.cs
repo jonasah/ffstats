@@ -1,28 +1,26 @@
 ﻿using FFStats.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace FFStats.Processing.Utils
 {
-    class SubRecord
+    class RegularSeasonSubStandings
     {
-        public int TeamId { get; set; }
+        class SubRecord
+        {
+            public int TeamId { get; set; }
 
-        public int Win { get; set; }
-        public int Loss { get; set; }
-        public int GamesPlayed { get => (Win + Loss); }
-        public double Pct { get => (GamesPlayed == 0 ? 0 : ((double)Win / GamesPlayed)); }
+            public int Win { get; set; }
+            public int Loss { get; set; }
+            public int GamesPlayed { get => (Win + Loss); }
+            public double Pct { get => (GamesPlayed == 0 ? 0 : ((double)Win / GamesPlayed)); }
 
-        public double PointsFor { get; set; }
-    }
+            public double PointsFor { get; set; }
+        }
 
-    class SubStandings
-    {
         public List<TeamRecord> TeamRecords { get; private set; } = new List<TeamRecord>();
 
-        public SubStandings(TeamRecord teamRecord)
+        public RegularSeasonSubStandings(TeamRecord teamRecord)
         {
             Add(teamRecord);
         }

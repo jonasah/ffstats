@@ -16,9 +16,10 @@ namespace FFStats.WebApp.Models
     public class TeamInfo
     {
         public Team Team { get; set; }
-        public List<TeamRecord> YearRecords { get; set; }
-        public TeamRecord CareerRecord { get; set; }
+        public List<TeamRecord> RegularSeasonRecords { get; set; }
+        public TeamRecord RegularSeasonCareerRecord { get; set; }
         public List<Head2HeadRecord> H2HRecords { get; set; }
+        public List<TeamRecord> PlayoffFinalRecords { get; set; }
     }
 
     public class TeamPlayerInfo

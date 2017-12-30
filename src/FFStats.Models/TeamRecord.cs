@@ -38,5 +38,7 @@ namespace FFStats.Models
 
         [Required]
         public List<Head2HeadRecord> Head2HeadRecords { get; set; }
+
+        public bool IsPlayoffs { get; set; }
     }
 }

@@ -9,6 +9,26 @@
 
 <div>Owner: @Model.Team.Owner</div>
 
+<h3>Championship Positions</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="align-center">Year</th>
+            <th class="align-center">Position</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var pr in Model.PlayoffFinalRecords)
+        {
+            <tr>
+                <td class="align-center">@pr.Year</td>
+                <td class="align-center">@pr.Rank</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <h3>Regular Season</h3>
 
 <table class="table">
@@ -24,7 +44,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var yr in Model.YearRecords)
+        @foreach (var yr in Model.RegularSeasonRecords)
         {
             <tr>
                 <td class="align-center">
@@ -43,11 +63,11 @@
         <tr>
             <td class="align-center">Total</td>
             <td></td>
-            <td class="align-center">@Model.CareerRecord.Win</td>
-            <td class="align-center">@Model.CareerRecord.Loss</td>
-            <td class="align-center">@($"{Model.CareerRecord.Pct:.000}")</td>
-            <td class="align-center">@($"{Model.CareerRecord.PointsFor:0.00}")</td>
-            <td class="align-center">@($"{Model.CareerRecord.PointsAgainst:0.00}")</td>
+            <td class="align-center">@Model.RegularSeasonCareerRecord.Win</td>
+            <td class="align-center">@Model.RegularSeasonCareerRecord.Loss</td>
+            <td class="align-center">@($"{Model.RegularSeasonCareerRecord.Pct:.000}")</td>
+            <td class="align-center">@($"{Model.RegularSeasonCareerRecord.PointsFor:0.00}")</td>
+            <td class="align-center">@($"{Model.RegularSeasonCareerRecord.PointsAgainst:0.00}")</td>
         </tr>
     </tfoot>
 </table>

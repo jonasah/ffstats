@@ -1,7 +1,6 @@
 ﻿using FFStats.DbHandler;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace FFStats.Processing
 {
@@ -9,7 +8,7 @@ namespace FFStats.Processing
     {
         public static Utils.Standings CalculateStandings(int year, int week, bool force = false)
         {
-            if (week < 1 || week > 14)
+            if (week < 1 || week > 16)
             {
                 throw new ArgumentException();
             }
@@ -38,9 +37,16 @@ namespace FFStats.Processing
 
             Console.WriteLine("Calculating standings for {0} week {1}", year, week);
 
-            var newStandings = prevStandings; // NOTE: needs deep copy?
-            newStandings.SetWeek(week);
-            newStandings.SetIdsToZero(); // TODO: fix ugly hack
+            Utils.Standings newStandings = null;
+
+            if (week <= 14)
+            {
+                newStandings = new Utils.RegularSeasonStandings(prevStandings);
+            }
+            else
+            {
+                newStandings = new Utils.PlayoffStandings(prevStandings);
+            }
 
             var games = GameHandler.GetGamesByWeek(year, week);
 
@@ -59,14 +65,24 @@ namespace FFStats.Processing
             // update season info
             var seasonInfo = SeasonInfoHandler.GetSeason(year);
 
-            var highestPointsForRecord = newStandings.GetHighestPointsForRecord();
-            seasonInfo.HighestPointsFor = highestPointsForRecord.PointsFor;
-            seasonInfo.HighestPointsForTeamId = highestPointsForRecord.TeamId;
-            seasonInfo.HighestPointsForTeam = highestPointsForRecord.Team;
-
-            if (week == 14)
+            if (week <= 14)
             {
-                seasonInfo.RegularSeasonChampionId = newStandings.TeamRecords[0].TeamId;
+                var highestPointsForRecord = newStandings.GetHighestPointsForRecord();
+                seasonInfo.HighestPointsFor = highestPointsForRecord.PointsFor;
+                seasonInfo.HighestPointsForTeamId = highestPointsForRecord.TeamId;
+                seasonInfo.HighestPointsForTeam = highestPointsForRecord.Team;
+
+                if (week == 14)
+                {
+                    seasonInfo.RegularSeasonChampionId = newStandings.TeamRecords[0].TeamId;
+                }
+            }
+            else if (week == 16)
+            {
+                seasonInfo.ChampionId = newStandings.TeamRecords[0].TeamId;
+                seasonInfo.SecondPlaceId = newStandings.TeamRecords[1].TeamId;
+                seasonInfo.ThirdPlaceId = newStandings.TeamRecords[2].TeamId;
+                seasonInfo.SackoId = newStandings.TeamRecords.Last().TeamId;
             }
 
             SeasonInfoHandler.Update(seasonInfo);

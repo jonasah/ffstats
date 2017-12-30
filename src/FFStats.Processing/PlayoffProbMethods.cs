@@ -188,7 +188,7 @@ namespace FFStats.Processing
 
         private static Api.Standings GetStandings(int year, int week)
         {
-            var standings = Standings.GetStandings(year, week);
+            var standings = RegularSeasonStandings.GetStandings(year, week);
 
             return new Api.Standings
             {

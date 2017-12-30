@@ -29,8 +29,8 @@ namespace FFStats.WebApp.Controllers
         [Route("{id}")]
         public IActionResult TeamInfo(int id)
         {
-            var yearRecords = TeamRecordHandler.GetFinalTeamRecordsForEachYear(id);
-            var careerRecord = yearRecords.Aggregate((total, next) =>
+            var regSeasonRecords = TeamRecordHandler.GetFinalRegularSeasonTeamRecordsForEachYear(id);
+            var regSeasonCareerRecord = regSeasonRecords.Aggregate((total, next) =>
             {
                 return new TeamRecord
                 {
@@ -41,13 +41,15 @@ namespace FFStats.WebApp.Controllers
                 };
             });
             var h2hRecords = TeamRecordHandler.GetAccumulatedHead2HeadRecords(id);
+            var playoffFinalRecords = TeamRecordHandler.GetFinalTeamRecordsForEachYear(id).Where(tr => tr.IsPlayoffs).ToList();
 
             return View(new TeamInfo
             {
                 Team = TeamHandler.GetById(id),
-                YearRecords = yearRecords,
-                CareerRecord = careerRecord,
-                H2HRecords = h2hRecords
+                RegularSeasonRecords = regSeasonRecords,
+                RegularSeasonCareerRecord = regSeasonCareerRecord,
+                H2HRecords = h2hRecords,
+                PlayoffFinalRecords = playoffFinalRecords
             });
         }
 

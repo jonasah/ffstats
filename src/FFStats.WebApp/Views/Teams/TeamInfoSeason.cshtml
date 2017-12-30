@@ -31,10 +31,15 @@
         @{
             var prevWin = 0;
             var streak = 0;
-            var maxWeek = 0;
+            var maxWeek = Model.WeekRecords.Last().Week;
 
             foreach (var wr in Model.WeekRecords)
             {
+                if (wr.IsPlayoffs)
+                {
+                    continue;
+                }
+
                 if (prevWin < wr.Win)
                 {
                     // won this week
@@ -47,7 +52,6 @@
                 }
 
                 prevWin = wr.Win;
-                maxWeek = wr.Week;
 
                 <tr>
                     <td class="align-center">@wr.Week</td>
@@ -138,7 +142,7 @@
                 <th class="align-center">@($"{week}")</th>
             }
 
-            <th>Start Pct</th>
+            <th class="align-center">Start Pct</th>
         </tr>
     </thead>
     <tbody>

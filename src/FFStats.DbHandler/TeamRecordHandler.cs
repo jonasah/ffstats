@@ -31,12 +31,12 @@ namespace FFStats.DbHandler
             }
         }
 
-        public static List<TeamRecord> GetLatestTeamRecords(int year)
+        public static List<TeamRecord> GetLatestRegularSeasonTeamRecords(int year)
         {
             using (var db = new FFStatsDbContext())
             {
                 var teamRecords = db.TeamRecords
-                    .Where(tr => tr.Year == year);
+                    .Where(tr => tr.Year == year && !tr.IsPlayoffs);
 
                 if (teamRecords.Count() == 0)
                 {
@@ -82,6 +82,19 @@ namespace FFStats.DbHandler
             {
                 return db.TeamRecords
                     .Where(tr => tr.TeamId == teamId)
+                    .GroupBy(tr => tr.Year)
+                    .Select(g => g.Where(tr => tr.Week == g.Max(t => t.Week)).First())
+                    .OrderBy(tr => tr.Year)
+                    .ToList();
+            }
+        }
+
+        public static List<TeamRecord> GetFinalRegularSeasonTeamRecordsForEachYear(int teamId)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.TeamRecords
+                    .Where(tr => tr.TeamId == teamId && !tr.IsPlayoffs)
                     .GroupBy(tr => tr.Year)
                     .Select(g => g.Where(tr => tr.Week == g.Max(t => t.Week)).First())
                     .OrderBy(tr => tr.Year)
