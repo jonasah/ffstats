@@ -216,7 +216,7 @@ namespace FFStats.Processing
 
         private static Api.Schedule GetSchedule(int year)
         {
-            var allGames = GameHandler.GetGamesByYear(year).GroupBy(g => g.Week);
+            var allGames = GameHandler.GetGamesByYear(year).Where(g => g.Week <= 14).GroupBy(g => g.Week);
 
             return new Api.Schedule
             {
