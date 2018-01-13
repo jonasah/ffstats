@@ -106,12 +106,21 @@ namespace FFStats.DbHandler
         {
             using (var db = new FFStatsDbContext())
             {
-                return db.Head2HeadRecords
+                var tmpCollection = db.Head2HeadRecords
                     .Where(h2h => h2h.TeamId == teamId)
                     .Include(h2h => h2h.Opponent)
                     .GroupBy(h2h => h2h.OpponentId)
-                    .Select(g => g.Where(h2h => h2h.Week == g.Max(h2 => h2.Week)).First())
-                    .OrderBy(h2h => h2h.Opponent.Name)
+                    .Select(g => g.GroupBy(h2h => h2h.Year).Select(g2 => g2.First(h2h => h2h.Week == g2.Max(h2 => h2.Week))))
+                    .ToList(); // NOTE: crashes with NotImplementedException otherwise
+
+               return tmpCollection
+                    .Select(g => g.Aggregate((total, next) => new Head2HeadRecord
+                    {
+                        Opponent = next.Opponent,
+                        OpponentId = next.OpponentId,
+                        Win = total.Win + next.Win,
+                        Loss = total.Loss + next.Loss
+                    }))
                     .ToList();
             }
         }
