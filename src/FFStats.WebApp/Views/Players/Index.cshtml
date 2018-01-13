@@ -1,32 +1,35 @@
-﻿
+﻿@model List<PlayerCareerInfo>
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Players";
 }
 
-@model List<PlayerCareerInfo>
+<div class="page-header">
+    <h2>Players</h2>
+</div>
 
-<h2>Players</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Player</th>
-            <th>Position</th>
-            <th class="align-center">Teams</th>
-            <th class="align-center">On roster</th>
-            <th class="align-center">Started</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var player in Model)
-        {
+<div>
+    <table class="table table-condensed table-striped table-hover">
+        <thead>
             <tr>
-                <td>@Html.ActionLink($"{player.Player.Name}", "PlayerInfo", "players", new { id = player.Player.Id })</td>
-                <td class="align-center">@player.Player.Position</td>
-                <td class="align-center">@player.NumTeams</td>
-                <td class="align-center">@player.WeeksOnRoster</td>
-                <td class="align-center">@player.WeeksStarted</td>
+                <th>Player</th>
+                <th class="text-center">Position</th>
+                <th class="text-center">Teams</th>
+                <th class="text-center">On roster</th>
+                <th class="text-center">Started</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var player in Model)
+            {
+                <tr>
+                    <td>@Html.ActionLink($"{player.Player.Name}", "PlayerInfo", "players", new { id = player.Player.Id })</td>
+                    <td class="text-center">@player.Player.Position</td>
+                    <td class="text-center">@player.NumTeams</td>
+                    <td class="text-center">@player.WeeksOnRoster</td>
+                    <td class="text-center">@player.WeeksStarted</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

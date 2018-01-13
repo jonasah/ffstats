@@ -1,32 +1,33 @@
-﻿
+﻿@model PlayerInfo
+
 @{
-    ViewData["Title"] = "PlayerInfo";
+    ViewData["Title"] = Model.Player.Name;
 }
 
-@model PlayerInfo
+<div class="page-header">
+    <h2>@Model.Player.Name <small>@Model.Player.Position</small></h2>
+</div>
 
-<h2>@Model.Player.Name</h2>
-
-<div>Position: @Model.Player.Position</div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th class="align-center">Year</th>
-            <th class="align-center">Teams</th>
-            <th class="align-center">On roster</th>
-            <th class="align-center">Started</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var year in Model.Years)
-        {
+<div>
+    <table class="table table-condensed table-striped table-hover">
+        <thead>
             <tr>
-                <td class="align-center">@Html.ActionLink($"{year.Year}", "PlayerInfoSeason", "Players", new { id = Model.Player.Id, year = year.Year }, null)</td>
-                <td class="align-center">@year.NumTeams</td>
-                <td class="align-center">@year.WeeksOnRoster</td>
-                <td class="align-center">@year.WeeksStarted</td>
+                <th class="text-center">Year</th>
+                <th class="text-center">Teams</th>
+                <th class="text-center">On roster</th>
+                <th class="text-center">Started</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var year in Model.Years)
+            {
+                <tr>
+                    <td class="text-center">@Html.ActionLink($"{year.Year}", "PlayerInfoSeason", "Players", new { id = Model.Player.Id, year = year.Year }, null)</td>
+                    <td class="text-center">@year.NumTeams</td>
+                    <td class="text-center">@year.WeeksOnRoster</td>
+                    <td class="text-center">@year.WeeksStarted</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

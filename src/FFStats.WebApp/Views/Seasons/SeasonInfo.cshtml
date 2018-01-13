@@ -1,75 +1,83 @@
-﻿
+﻿@model SeasonInfo
+
 @{
-    ViewData["Title"] = "SeasonInfo";
+    ViewData["Title"] = Model.Year;
 }
 
-@model SeasonInfo
+<div class="page-header">
+    <h2>@Model.Year</h2>
+</div>
 
-<h2>@Model.Year</h2>
+<div>
+    <h3>Standings</h3>
 
-<h3>Standings</h3>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Rank</th>
-            <th>Team</th>
-            <th class="align-center">W</th>
-            <th class="align-center">L</th>
-            <th class="align-center">Pct</th>
-            <th class="align-center">Stk</th>
-            <th class="align-center">PF</th>
-            <th class="align-center">PA</th>
-            <th class="align-center">Net Pts</th>
-            <th class="align-center">Avg PF</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var tr in Model.Standings)
-        {
+    <table class="table table-condensed table-striped table-hover">
+        <thead>
             <tr>
-                <td class="align-center">@tr.Rank</td>
-                <td>
-                    @Html.ActionLink($"{tr.Team.Name}", "TeamInfoSeason", "Teams", new { id = tr.TeamId, year = Model.Year }, null)
-                </td>
-                <td class="align-center">@tr.Win</td>
-                <td class="align-center">@tr.Loss</td>
-                <td class="align-center">@($"{tr.Pct:.000}")</td>
-                <td class="align-center"></td>
-                <td class="align-center">@($"{tr.PointsFor:0.00}")</td>
-                <td class="align-center">@($"{tr.PointsAgainst:0.00}")</td>
-                <td class="align-center">@($"{tr.PointsDiff:0.00}")</td>
-                <td class="align-center">@($"{tr.PointsFor / tr.GamesPlayed:0.00}")</td>
+                <th class="text-center">Rank</th>
+                <th>Team</th>
+                <th class="text-center">W</th>
+                <th class="text-center">L</th>
+                <th class="text-center">Pct</th>
+                <th class="text-center">Stk</th>
+                <th class="text-center">PF</th>
+                <th class="text-center">PA</th>
+                <th class="text-center">Net Pts</th>
+                <th class="text-center">Avg PF</th>
             </tr>
-        }
-    </tbody>
-</table>
-
-<h3>Games</h3>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Week</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{
-            var prevWeek = 0;
-
-            foreach (var game in Model.Games)
+        </thead>
+        <tbody>
+            @foreach (var tr in Model.Standings)
             {
                 <tr>
-                    <td class="align-center">@(game.Week != prevWeek ? Html.ActionLink(game.Week.ToString(), "GameCenter", "Games", new { year = Model.Year, week = game.Week }) : null)</td>
-                    <td>@game.GameScores[0].Team.Name</td>
-                    <td class="align-right">@($"{game.GameScores[0].Points:0.00}")</td>
-                    <td class="align-right">@($"{game.GameScores[1].Points:0.00}")</td>
-                    <td>@game.GameScores[1].Team.Name</td>
+                    <td class="text-center">@tr.Rank</td>
+                    <td>
+                        @Html.ActionLink($"{tr.Team.Name}", "TeamInfoSeason", "Teams", new { id = tr.TeamId, year = Model.Year }, null)
+                    </td>
+                    <td class="text-center">@tr.Win</td>
+                    <td class="text-center">@tr.Loss</td>
+                    <td class="text-center">@($"{tr.Pct:.000}")</td>
+                    <td class="text-center"></td>
+                    <td class="text-center">@($"{tr.PointsFor:0.00}")</td>
+                    <td class="text-center">@($"{tr.PointsAgainst:0.00}")</td>
+                    <td class="text-center">@($"{tr.PointsDiff:0.00}")</td>
+                    <td class="text-center">@($"{tr.PointsFor / tr.GamesPlayed:0.00}")</td>
                 </tr>
-
-                prevWeek = game.Week;
             }
-        }
-    </tbody>
+        </tbody>
+    </table>
+</div>
 
-</table>
+<hr />
+
+<div>
+    <h3>Games</h3>
+
+    <table class="table table-condensed table-striped table-hover">
+        <thead>
+            <tr>
+                <th class="text-center">Week</th>
+                <th colspan="4"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var prevWeek = 0;
+
+                foreach (var game in Model.Games)
+                {
+                    <tr>
+                        <td class="text-center">@(game.Week != prevWeek ? Html.ActionLink(game.Week.ToString(), "GameCenter", "Games", new { year = Model.Year, week = game.Week }) : null)</td>
+                        <td>@game.GameScores[0].Team.Name</td>
+                        <td class="text-right">@($"{game.GameScores[0].Points:0.00}")</td>
+                        <td class="text-right">@($"{game.GameScores[1].Points:0.00}")</td>
+                        <td>@game.GameScores[1].Team.Name</td>
+                    </tr>
+
+                    prevWeek = game.Week;
+                }
+            }
+        </tbody>
+
+    </table>
+</div>

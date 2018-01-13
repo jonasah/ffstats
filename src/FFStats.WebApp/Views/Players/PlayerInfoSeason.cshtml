@@ -1,37 +1,40 @@
-﻿
+﻿@model List<FFStats.Models.RosterEntry>
+
 @{
-    ViewData["Title"] = "PlayerInfoSeason";
+    ViewData["Title"] = $"{Model[0].Year} {Model[0].Player.Name}";
 }
 
-@model List<FFStats.Models.RosterEntry>
+<div class="page-header">
+    <h2>
+        @Html.ActionLink($"{Model[0].Year}", "SeasonInfo", "Seasons", new { year = Model[0].Year }, null)
+        @Html.ActionLink($"{Model[0].Player.Name}", "PlayerInfo", "Players", new { id = Model[0].Player.Id }, null)
+    </h2>
+</div>
 
-<h2>
-    @Html.ActionLink($"{Model[0].Year}", "SeasonInfo", "Seasons", new { year = Model[0].Year }, null)
-    @Html.ActionLink($"{Model[0].Player.Name}", "PlayerInfo", "Players", new { id = Model[0].Player.Id }, null)
-</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th class="align-center">Year</th>
-            <th class="align-center">Week</th>
-            <th>Team</th>
-            <th class="align-center">Position</th>
-            <th class="align-center">Points</th>
-            <th class="align-center">Bye</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var entry in Model)
-        {
+<div>
+    <table class="table table-condensed table-striped table-hover">
+        <thead>
             <tr>
-                <td class="align-center">@entry.Year</td>
-                <td class="align-center">@entry.Week</td>
-                <td>@Html.ActionLink($"{entry.Team.Name}", "TeamInfo", "Teams", new { id = entry.TeamId }, null)</td>
-                <td class="align-center">@entry.Position</td>
-                <td class="align-center">@(entry.IsByeWeek ? "-" : $"{entry.Points:0.00}")</td>
-                <td class="align-center">@(entry.IsByeWeek ? "Y" : "")</td>
+                <th class="text-center">Year</th>
+                <th class="text-center">Week</th>
+                <th>Team</th>
+                <th class="text-center">Position</th>
+                <th class="text-center">Points</th>
+                <th class="text-center">Bye</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var entry in Model)
+            {
+                <tr>
+                    <td class="text-center">@entry.Year</td>
+                    <td class="text-center">@entry.Week</td>
+                    <td>@Html.ActionLink($"{entry.Team.Name}", "TeamInfo", "Teams", new { id = entry.TeamId }, null)</td>
+                    <td class="text-center">@entry.Position</td>
+                    <td class="text-center">@(entry.IsByeWeek ? "-" : $"{entry.Points:0.00}")</td>
+                    <td class="text-center">@(entry.IsByeWeek ? "Y" : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

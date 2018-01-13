@@ -1,33 +1,37 @@
-﻿@{
-    ViewData["Title"] = "Index";
+﻿@model List<TeamOverallInfo>
+
+@{
+    ViewData["Title"] = "Teams";
 }
 
-@model List<TeamOverallInfo>
+<div class="page-header">
+    <h2>Teams</h2>
+</div>
 
-<h2>Teams</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Team</th>
-            <th class="align-center">Seasons</th>
-            <th class="align-center"># Champion</th>
-            <th class="align-center">W</th>
-            <th class="align-center">L</th>
-            <th class="align-center">Pct</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var team in Model)
-        {
+<div>
+    <table class="table table-condensed table-striped table-hover">
+        <thead>
             <tr>
-                <td>@Html.ActionLink($"{team.Team.Name}", "TeamInfo", "Teams", new { id = team.Team.Id }, null)</td>
-                <td class="align-center">@($"{team.YearsActive.Count} ({(team.YearsActive.Count == 1 ? team.YearsActive.First().ToString() : $"{team.YearsActive.First()} - {team.YearsActive.Last()}")})")</td>
-                <td class="align-center">@team.NumChampion</td>
-                <td class="align-center">@team.CareerRecord.Win</td>
-                <td class="align-center">@team.CareerRecord.Loss</td>
-                <td class="align-center">@($"{team.CareerRecord.Pct:.000}")</td>
+                <th>Team</th>
+                <th class="text-center">Seasons</th>
+                <th class="text-center"># Champion</th>
+                <th class="text-center">W</th>
+                <th class="text-center">L</th>
+                <th class="text-center">Pct</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var team in Model)
+            {
+                <tr>
+                    <td>@Html.ActionLink($"{team.Team.Name}", "TeamInfo", "Teams", new { id = team.Team.Id }, null)</td>
+                    <td class="text-center">@($"{team.YearsActive.Count} ({(team.YearsActive.Count == 1 ? team.YearsActive.First().ToString() : $"{team.YearsActive.First()} - {team.YearsActive.Last()}")})")</td>
+                    <td class="text-center">@team.NumChampion</td>
+                    <td class="text-center">@team.CareerRecord.Win</td>
+                    <td class="text-center">@team.CareerRecord.Loss</td>
+                    <td class="text-center">@($"{team.CareerRecord.Pct:.000}")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
