@@ -16,7 +16,6 @@
     <table class="table table-condensed table-striped table-hover">
         <thead>
             <tr>
-                <th class="text-center">Year</th>
                 <th class="text-center">Week</th>
                 <th>Team</th>
                 <th class="text-center">Position</th>
@@ -28,7 +27,6 @@
             @foreach (var entry in Model)
             {
                 <tr>
-                    <td class="text-center">@entry.Year</td>
                     <td class="text-center">@entry.Week</td>
                     <td>@Html.ActionLink($"{entry.Team.Name}", "TeamInfo", "Teams", new { id = entry.TeamId }, null)</td>
                     <td class="text-center">@entry.Position</td>
