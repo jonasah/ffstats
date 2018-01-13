@@ -1,14 +1,16 @@
 ﻿@model List<FFStats.Models.RosterEntry>
 
 @{
-    ViewData["Title"] = $"{Model[0].Year} {Model[0].Player.Name}";
+    ViewData["Title"] = $"{Model[0].Player.Name} - {Model[0].Year}";
     ViewData["Section"] = "Players";
 }
 
 <div class="page-header">
     <h2>
-        @Html.ActionLink($"{Model[0].Year}", "SeasonInfo", "Seasons", new { year = Model[0].Year }, null)
         @Html.ActionLink($"{Model[0].Player.Name}", "PlayerInfo", "Players", new { id = Model[0].Player.Id }, null)
+        <small>
+            @Html.ActionLink($"{Model[0].Year}", "SeasonInfo", "Seasons", new { year = Model[0].Year }, null)
+        </small>
     </h2>
 </div>
 

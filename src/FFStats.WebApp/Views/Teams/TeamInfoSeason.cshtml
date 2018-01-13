@@ -1,14 +1,16 @@
 ﻿@model TeamInfoSeason
 
 @{
-    ViewData["Title"] = $"{Model.Year} {Model.Team.Name}";
+    ViewData["Title"] = $"{Model.Team.Name} - {Model.Year}";
     ViewData["Section"] = "Teams";
 }
 
 <div class="page-header">
     <h2>
-        @Html.ActionLink($"{Model.Year}", "SeasonInfo", "Seasons", new { year = Model.Year }, null)
         @Html.ActionLink($"{Model.Team.Name}", "TeamInfo", "Teams", new { id = Model.Team.Id }, null)
+        <small>
+            @Html.ActionLink($"{Model.Year}", "SeasonInfo", "Seasons", new { year = Model.Year }, null)
+        </small>
     </h2>
 </div>
 
