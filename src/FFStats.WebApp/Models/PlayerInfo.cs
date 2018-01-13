@@ -34,4 +34,11 @@ namespace FFStats.WebApp.Models
         public int WeeksOnRoster { get; set; }
         public int WeeksStarted { get; set; }
     }
+
+    public class PlayerIndex
+    {
+        public char CurrentFirstChar { get; set; }
+        public List<char> AllFirstChars { get; set; }
+        public List<PlayerCareerInfo> Players { get; set; }
+    }
 }

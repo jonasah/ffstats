@@ -1,4 +1,4 @@
-﻿@model List<PlayerCareerInfo>
+﻿@model PlayerIndex
 
 @{
     ViewData["Title"] = "Players";
@@ -6,8 +6,21 @@
 }
 
 <div class="page-header">
-    <h2>Players</h2>
+    <h2>Players <small>@Model.CurrentFirstChar</small></h2>
 </div>
+
+<nav>
+    <ul class="pagination">
+        @foreach (var ch in Model.AllFirstChars)
+        {
+            var className = (ch == Model.CurrentFirstChar ? "active" : "");
+
+            <li class="@className">
+                <a href="?firstChar=@ch">@ch</a>
+            </li>
+        }
+    </ul>
+</nav>
 
 <div>
     <table class="table table-condensed table-striped table-hover">
@@ -21,7 +34,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var player in Model)
+            @foreach (var player in Model.Players)
             {
                 <tr>
                     <td>@Html.ActionLink($"{player.Player.Name}", "PlayerInfo", "players", new { id = player.Player.Id })</td>

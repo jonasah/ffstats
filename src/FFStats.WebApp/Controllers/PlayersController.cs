@@ -12,9 +12,16 @@ namespace FFStats.WebApp.Controllers
     public class PlayersController : Controller
     {
         [Route("")]
-        public IActionResult Index()
+        public IActionResult Index(char? firstChar)
         {
-            var players = PlayerHandler.GetAll()
+            var first = char.ToUpper(firstChar ?? 'A');
+
+            if (first < 'A' || first > 'Z')
+            {
+                return RedirectToAction("Index");
+            }
+
+            var players = PlayerHandler.GetAll(first)
                 .OrderBy(p => p.Name)
                 .Select(p =>
                 {
@@ -30,7 +37,17 @@ namespace FFStats.WebApp.Controllers
                 })
                 .ToList();
 
-            return View(players);
+            if (players.Count == 0)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(new PlayerIndex
+            {
+                CurrentFirstChar = first,
+                AllFirstChars = PlayerHandler.GetFirstChars(),
+                Players = players
+            });
         }
 
         [Route("{id}")]

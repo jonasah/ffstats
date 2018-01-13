@@ -42,5 +42,27 @@ namespace FFStats.DbHandler
                 return db.Players.ToList();
             }
         }
+
+        public static List<Player> GetAll(char firstChar)
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Players
+                    .Where(p => p.Name.StartsWith(firstChar))
+                    .ToList();
+            }
+        }
+
+        public static List<char> GetFirstChars()
+        {
+            using (var db = new FFStatsDbContext())
+            {
+                return db.Players
+                    .Select(p => p.Name[0])
+                    .Distinct()
+                    .OrderBy(c => c)
+                    .ToList();
+            }
+        }
     }
 }
