@@ -30,9 +30,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Seasons" asp-action="Index">Seasons</a></li>
-                    <li><a asp-area="" asp-controller="Teams" asp-action="Index">Teams</a></li>
-                    <li><a asp-area="" asp-controller="Players" asp-action="Index">Players</a></li>
+                    <li class="@((string)ViewData["Section"] == "Seasons" ? "active" : "")">
+                        <a asp-area="" asp-controller="Seasons" asp-action="Index">Seasons</a>
+                    </li>
+                    <li class="@((string)ViewData["Section"] == "Teams" ? "active" : "")">
+                        <a asp-area="" asp-controller="Teams" asp-action="Index">Teams</a>
+                    </li>
+                    <li class="@((string)ViewData["Section"] == "Players" ? "active" : "")">
+                        <a asp-area="" asp-controller="Players" asp-action="Index">Players</a>
+                    </li>
                 </ul>
             </div>
         </div>
