@@ -37,14 +37,6 @@
     var nextWeek = GetNextWeek(Model.Year, Model.Week);
 }
 
-<div>
-    <span>@Html.ActionLink($"« {prevWeek.Item1}w{prevWeek.Item2:D2}", "GameCenter", "Games", new { year = prevWeek.Item1, week = prevWeek.Item2 })</span>
-    <span>@("«")</span>
-    <span>@($"{Model.Year}w{Model.Week:D2}")</span>
-    <span>@("»")</span>
-    <span>@Html.ActionLink($"{nextWeek.Item1}w{nextWeek.Item2:D2} »", "GameCenter", "Games", new { year = nextWeek.Item1, week = nextWeek.Item2 })</span>
-</div>
-
 @foreach (var game in Model.Games)
 {
     var team1 = game.TeamInfos[0];
@@ -54,7 +46,6 @@
     var team2FontWeightClass = team2.Points > team1.Points ? string.Empty : "font-weight-normal";
 
     <div>
-        <hr/>
         <table class="table table-condensed">
             <tbody>
                 <tr>
@@ -153,5 +144,17 @@
                 </tr>
             </tbody>
         </table>
+        <hr />
     </div>
 }
+
+<nav>
+    <ul class="pager">
+        <li class="">
+            @Html.ActionLink("« Previous", "GameCenter", "Games", new { year = prevWeek.Item1, week = prevWeek.Item2 })
+        </li>
+        <li class="">
+            @Html.ActionLink("Next »", "GameCenter", "Games", new { year = nextWeek.Item1, week = nextWeek.Item2 })
+        </li>
+    </ul>
+</nav>
