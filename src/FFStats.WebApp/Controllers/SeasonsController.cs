@@ -5,6 +5,7 @@ using FFStats.WebApp.Models;
 
 namespace FFStats.WebApp.Controllers
 {
+    [Route("")]
     [Route("seasons")]
     public class SeasonsController : Controller
     {

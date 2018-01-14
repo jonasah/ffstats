@@ -52,7 +52,7 @@ namespace FFStats.WebApp
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "seasons");
+                    template: "{controller=Seasons}/{action=Index}/{id?}");
             });
         }
     }
