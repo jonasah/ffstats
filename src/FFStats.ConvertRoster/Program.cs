@@ -26,7 +26,13 @@ namespace FFStats.ConvertRoster
             "Ramshall Eagles",
             "Nangijala IF",
             "The Shamones",
-            "Crush and run"
+            "Crush and run",
+            "Mechanical Moose",
+            "Los Pollos Hermanos",
+            "Zeke Squad",
+            "Hooked on a Thielen",
+            "ImJustHereSoIWontGetHigh",
+            "Wentz Upon A Time"
         };
         
         // roster positions in input
@@ -60,9 +66,25 @@ namespace FFStats.ConvertRoster
 
                 if (TeamNames.Contains(line))
                 {
+                    var dbTeamName = line;
+
+                    // renamed teams
+                    if (line == "Hooked on a Thielen")
+                    {
+                        dbTeamName = "Retro Hawks";
+                    }
+                    else if (line == "ImJustHereSoIWontGetHigh")
+                    {
+                        dbTeamName = "Nangijala IF";
+                    }
+                    else if (line == "Wentz Upon A Time")
+                    {
+                        dbTeamName = "Kings of the North";
+                    }
+
                     weekRosters.Rosters.Add(new Roster
                     {
-                        Team = line,
+                        Team = dbTeamName,
                         Entries = new List<RosterEntry>()
                     });
                 }
@@ -77,7 +99,28 @@ namespace FFStats.ConvertRoster
 
                     var playerLine = reader.ReadLine();
 
-                    if (playerLine.Contains("Bye"))
+                    if (playerLine.Contains("--empty--"))
+                    {
+                        continue;
+                    }
+
+                    if (playerLine.EndsWith("View Videos"))
+                    {
+                        var nextLine = reader.ReadLine();
+
+                        if (nextLine.Contains("Bye"))
+                        {
+                            entry.IsByeWeek = true;
+                            // status and stat line is on 'next' line
+                        }
+                        else
+                        {
+                            // skip status and stat lines
+                            reader.ReadLine();
+                            reader.ReadLine();
+                        }
+                    }
+                    else if (playerLine.Contains("Bye"))
                     {
                         entry.IsByeWeek = true;
                         // status and stat line is on player line
@@ -91,7 +134,7 @@ namespace FFStats.ConvertRoster
 
                     // extract player name and position from player line
                     // (assume that player name ends with lowercase character)
-                    var playerMatch = Regex.Match(playerLine, @"([A-Za-z0-9' \.-]+[a-z])([A-Z]{1,3})\s");
+                    var playerMatch = Regex.Match(playerLine, @"([A-Za-z0-9' \.-]+[a-z])([A-Z]{1,3})(\s|View)");
                     entry.PlayerName = playerMatch.Groups[1].Value;
                     entry.PlayerPosition = Enum.Parse<Position>(playerMatch.Groups[2].Value);
 
