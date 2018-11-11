@@ -66,9 +66,9 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(TargetPath) $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.0\
-xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.0\
-xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Cored.dll" $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.0\</Command>
+      <Command>xcopy /y $(TargetPath) $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\
+xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\
+xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Cored.dll" $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -91,8 +91,8 @@ xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Cored.dll" $(SolutionDir)FFStats.Proces
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(TargetPath) $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.0\
-xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Core.dll" $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.0\</Command>
+      <Command>xcopy /y $(TargetPath) $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\
+xcopy /y "C:\Qt\5.9.3\msvc2017_64\bin\Qt5Core.dll" $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
