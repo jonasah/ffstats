@@ -19,6 +19,10 @@ namespace FFStats.Models.Import
     public class Schedule
     {
         public int Year { get; set; }
+        public int NumTeams { get; set; }
+        public int NumPlayoffTeams { get; set; }
+        public int RegularSeasonLength { get; set; }
+        public int PlayoffLength { get; set; }
         public List<ScheduleWeek> Weeks { get; set; }
     }
 }

@@ -141,7 +141,7 @@ namespace FFStats.Processing.Utils
                 teamRecords = TeamRecordHandler.GetTeamRecordsByWeek(year, week);
             }
 
-            if (week <= 14)
+            if (week <= SeasonInfoHandler.GetSeason(year).RegularSeasonLength)
             {
                 return new RegularSeasonStandings(teamRecords);
             }

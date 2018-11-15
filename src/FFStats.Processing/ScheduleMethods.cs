@@ -83,7 +83,11 @@ namespace FFStats.Processing
             {
                 SeasonInfoHandler.Add(new SeasonInfo
                 {
-                    Year = schedule.Year
+                    Year = schedule.Year,
+                    NumTeams = schedule.NumTeams,
+                    NumPlayoffTeams = schedule.NumPlayoffTeams,
+                    RegularSeasonLength = schedule.RegularSeasonLength,
+                    PlayoffLength = schedule.PlayoffLength
                 });
             }
         }

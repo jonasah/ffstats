@@ -39,7 +39,9 @@ namespace FFStats.Processing
 
             Utils.Standings newStandings = null;
 
-            if (week <= 14)
+            var seasonInfo = SeasonInfoHandler.GetSeason(year);
+
+            if (week <= seasonInfo.RegularSeasonLength)
             {
                 newStandings = new Utils.RegularSeasonStandings(prevStandings);
             }
@@ -63,21 +65,19 @@ namespace FFStats.Processing
             TeamRecordHandler.Add(newStandings.TeamRecords);
 
             // update season info
-            var seasonInfo = SeasonInfoHandler.GetSeason(year);
-
-            if (week <= 14)
+            if (week <= seasonInfo.RegularSeasonLength)
             {
                 var highestPointsForRecord = newStandings.GetHighestPointsForRecord();
                 seasonInfo.HighestPointsFor = highestPointsForRecord.PointsFor;
                 seasonInfo.HighestPointsForTeamId = highestPointsForRecord.TeamId;
                 seasonInfo.HighestPointsForTeam = highestPointsForRecord.Team;
 
-                if (week == 14)
+                if (week == seasonInfo.RegularSeasonLength)
                 {
                     seasonInfo.RegularSeasonChampionId = newStandings.TeamRecords[0].TeamId;
                 }
             }
-            else if (week == 16)
+            else if (week == seasonInfo.SeasonLength)
             {
                 seasonInfo.ChampionId = newStandings.TeamRecords[0].TeamId;
                 seasonInfo.SecondPlaceId = newStandings.TeamRecords[1].TeamId;

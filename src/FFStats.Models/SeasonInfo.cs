@@ -13,6 +13,12 @@ namespace FFStats.Models
         [Range(2014, int.MaxValue)]
         public int Year { get; set; }
 
+        public int NumTeams { get; set; }
+        public int NumPlayoffTeams { get; set; }
+        public int RegularSeasonLength { get; set; }
+        public int PlayoffLength { get; set; }
+        public int SeasonLength => RegularSeasonLength + PlayoffLength;
+
         public int? ChampionId { get; set; }
         public Team Champion { get; set; }
 
