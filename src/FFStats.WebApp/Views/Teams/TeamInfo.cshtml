@@ -46,6 +46,8 @@
                 <th class="text-center">Pct</th>
                 <th class="text-center">PF</th>
                 <th class="text-center">PA</th>
+                <th class="text-center">Net Pts</th>
+                <th class="text-center">Avg PF</th>
             </tr>
         </thead>
         <tbody>
@@ -61,6 +63,8 @@
                     <td class="text-center">@($"{yr.Pct:.000}")</td>
                     <td class="text-center">@($"{yr.PointsFor:0.00}")</td>
                     <td class="text-center">@($"{yr.PointsAgainst:0.00}")</td>
+                    <td class="text-center">@($"{yr.PointsDiff:0.00}")</td>
+                    <td class="text-center">@($"{yr.PointsFor / yr.GamesPlayed:0.00}")</td>
                 </tr>
             }
         </tbody>
@@ -73,6 +77,8 @@
                 <td class="text-center">@($"{Model.RegularSeasonCareerRecord.Pct:.000}")</td>
                 <td class="text-center">@($"{Model.RegularSeasonCareerRecord.PointsFor:0.00}")</td>
                 <td class="text-center">@($"{Model.RegularSeasonCareerRecord.PointsAgainst:0.00}")</td>
+                <td class="text-center">@($"{Model.RegularSeasonCareerRecord.PointsDiff:0.00}")</td>
+                <td class="text-center">@($"{Model.RegularSeasonCareerRecord.PointsFor / Model.RegularSeasonCareerRecord.GamesPlayed:0.00}")</td>
             </tr>
         </tfoot>
     </table>
