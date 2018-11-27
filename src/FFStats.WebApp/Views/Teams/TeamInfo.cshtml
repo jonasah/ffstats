@@ -93,6 +93,7 @@
         <thead>
             <tr>
                 <th>Opponent</th>
+                <th class="text-center">Games Played</th>
                 <th class="text-center">Win</th>
                 <th class="text-center">Loss</th>
                 <th class="text-center">Pct</th>
@@ -103,6 +104,7 @@
             {
                 <tr>
                     <td>@record.Opponent.Name</td>
+                    <td class="text-center">@record.GamesPlayed</td>
                     <td class="text-center">@record.Win</td>
                     <td class="text-center">@record.Loss</td>
                     <td class="text-center">@($"{record.Pct:.000}")</td>
