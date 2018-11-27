@@ -40,7 +40,7 @@ namespace FFStats.WebApp.Controllers
                     PointsAgainst = total.PointsAgainst + next.PointsAgainst
                 };
             });
-            var h2hRecords = TeamRecordHandler.GetAccumulatedHead2HeadRecords(id);
+            var h2hRecords = TeamRecordHandler.GetAccumulatedHead2HeadRecords(id).OrderByDescending(h2h => h2h.Pct).ToList();
             var playoffFinalRecords = TeamRecordHandler.GetFinalTeamRecordsForEachYear(id).Where(tr => tr.IsPlayoffs).ToList();
 
             return View(new TeamInfo
