@@ -13,6 +13,9 @@ namespace FFStats.ConvertRoster
 {
     class Program
     {
+        // README: copy all "Full Box Score" into txt file and save in input folder,
+        // named YYYY-wWW.txt (e.g. 2018-w01.txt).
+
         static readonly string InputDirectory = "input";
         static readonly string OutputDirectory = "output";
 
