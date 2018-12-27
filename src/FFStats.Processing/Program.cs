@@ -37,11 +37,11 @@ namespace FFStats.Processing
             }
             else if (settings.CalculateStandings)
             {
-                StandingsMethods.CalculateStandings(settings.Year, settings.Week, force: settings.Force);
+                StandingsMethods.CalculateStandings(settings.Year, settings.Weeks, force: settings.Force);
             }
             else if (settings.CalculatePlayoffProb)
             {
-                PlayoffProbMethods.CalculatePlayoffProb(settings.Year, settings.Week, force: settings.Force);
+                PlayoffProbMethods.CalculatePlayoffProb(settings.Year, settings.Weeks, force: settings.Force);
             }
 
             Console.WriteLine("DONE");

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.CommandLineUtils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FFStats.Processing
@@ -9,7 +10,7 @@ namespace FFStats.Processing
     {
         // common
         public int Year { get; set; }
-        public int Week { get; set; }
+        public int[] Weeks { get; set; }
         public bool Force { get; set; }
 
         // add commands
@@ -148,24 +149,24 @@ namespace FFStats.Processing
                     calcStandingsCommand.HelpOption(helpFlags);
 
                     var yearOption = calcStandingsCommand.Option("-y | --year", "Year", CommandOptionType.SingleValue);
-                    var weekOption = calcStandingsCommand.Option("-w | --week", "Week", CommandOptionType.SingleValue);
+                    var weeksOption = calcStandingsCommand.Option("-w | --week", "Week", CommandOptionType.MultipleValue);
 
                     calcStandingsCommand.OnExecute(() =>
                     {
-                        if (!yearOption.HasValue() || !weekOption.HasValue())
+                        if (!yearOption.HasValue() || !weeksOption.HasValue())
                         {
-                            calcStandingsCommand.SetError("Missing year and/or week");
+                            calcStandingsCommand.SetError("Missing year and/or weeks");
                             return 1;
                         }
 
                         try
                         {
                             Year = int.Parse(yearOption.Value());
-                            Week = int.Parse(weekOption.Value());
+                            Weeks = weeksOption.Values.Select(w => int.Parse(w)).ToArray();
                         }
                         catch (FormatException)
                         {
-                            calcStandingsCommand.SetError("Invalid year and/or week");
+                            calcStandingsCommand.SetError("Invalid year and/or weeks");
                             return 1;
                         }
 
@@ -182,24 +183,25 @@ namespace FFStats.Processing
                     calcPlayoffProbCommand.HelpOption(helpFlags);
 
                     var yearOption = calcPlayoffProbCommand.Option("-y | --year", "Year", CommandOptionType.SingleValue);
-                    var weekOption = calcPlayoffProbCommand.Option("-w | --week", "Week", CommandOptionType.SingleValue);
+                    var weeksOption = calcPlayoffProbCommand.Option("-w | --week", "Week", CommandOptionType.MultipleValue);
 
                     calcPlayoffProbCommand.OnExecute(() =>
                     {
-                        if (!yearOption.HasValue() || !weekOption.HasValue())
+                        if (!yearOption.HasValue() || !weeksOption.HasValue())
                         {
-                            calcPlayoffProbCommand.SetError("Missing year and/or week");
+                            calcPlayoffProbCommand.SetError("Missing year and/or weeks");
                             return 1;
                         }
 
                         try
                         {
                             Year = int.Parse(yearOption.Value());
-                            Week = int.Parse(weekOption.Value());
+                            Weeks = weeksOption.Values.Select(w => int.Parse(w)).ToArray();
                         }
                         catch (FormatException)
                         {
-                            calcPlayoffProbCommand.SetError("Invalid year and/or week");
+                            calcPlayoffProbCommand.SetError("Invalid year and/or weeks");
+                            return 1;
                         }
 
                         CalculatePlayoffProb = true;

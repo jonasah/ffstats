@@ -148,6 +148,14 @@ namespace FFStats.Processing
             }
         }
 
+        public static void CalculatePlayoffProb(int year, IEnumerable<int> weeks, bool force = false)
+        {
+            foreach (var week in weeks)
+            {
+                CalculatePlayoffProb(year, week, force);
+            }
+        }
+
         public static void CalculatePlayoffProb(int year, int week, bool force = false)
         {
             var exists = PlayoffProbabilityHandler.WeekExists(year, week);

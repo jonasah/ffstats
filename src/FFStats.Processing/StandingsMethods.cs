@@ -1,11 +1,20 @@
 ﻿using FFStats.DbHandler;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FFStats.Processing
 {
     static class StandingsMethods
     {
+        public static void CalculateStandings(int year, IEnumerable<int> weeks, bool force = false)
+        {
+            foreach (var week in weeks)
+            {
+                CalculateStandings(year, week, force);
+            }
+        }
+
         public static Utils.Standings CalculateStandings(int year, int week, bool force = false)
         {
             if (week < 1 || week > 16)
