@@ -1,0 +1,6 @@
+BasedOnStyle: Google
+ColumnLimit: 90
+FixNamespaceComments: false
+# NamespaceIndentationKind: All
+ReflowComments: false
+SpacesBeforeTrailingComments: 1

@@ -115,6 +115,9 @@ xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)FFStats.Processing\bin\$(Confi
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="FFStats.PlayoffProb.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".clang-format" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

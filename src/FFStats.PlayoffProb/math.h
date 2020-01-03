@@ -3,11 +3,11 @@
 
 namespace ffstats::playoffprob {
 
-  namespace {
-    constexpr unsigned int _pow(const unsigned int base, const unsigned int exp) {
-      return exp == 0 ? 1 : base * _pow(base, exp - 1);
-    }
-  }
+namespace {
+constexpr unsigned int _pow(const unsigned int base, const unsigned int exp) {
+  return exp == 0 ? 1 : base * _pow(base, exp - 1);
+}
+}
 
 }
 
