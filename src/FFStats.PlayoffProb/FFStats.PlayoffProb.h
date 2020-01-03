@@ -42,7 +42,7 @@ extern "C" {
   };
 
   struct ApiSchedule {
-    ApiScheduleWeek weeks[14];
+    ApiScheduleWeek weeks[13];
   };
 
   // output

@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 
-#define NUM_TEAMS 8
-#define NUM_PLAYOFF_TEAMS 4
+#define NUM_TEAMS 10
+#define NUM_PLAYOFF_TEAMS 6
 
 namespace ffstats::playoffprob {
 

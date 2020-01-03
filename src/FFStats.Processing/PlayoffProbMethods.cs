@@ -28,7 +28,7 @@ namespace FFStats.Processing
             public int TeamId;
             public int Win;
             public int Loss;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
             public Head2HeadRecord[] Head2HeadRecords;
         }
 
@@ -36,7 +36,7 @@ namespace FFStats.Processing
         public struct Standings
         {
             public int Week;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
             public TeamRecord[] TeamRecords;
         }
 
@@ -53,14 +53,14 @@ namespace FFStats.Processing
         public struct ScheduleWeek
         {
             public int Week;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public Game[] Games;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Schedule
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
             public ScheduleWeek[] Weeks;
         }
 
@@ -76,7 +76,7 @@ namespace FFStats.Processing
         [StructLayout(LayoutKind.Sequential)]
         public struct PlayoffProbOutput
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
             public PlayoffProb[] PlayoffProbs;
         }
 
@@ -224,7 +224,7 @@ namespace FFStats.Processing
 
         private static Api.Schedule GetSchedule(int year)
         {
-            var allGames = GameHandler.GetGamesByYear(year).Where(g => g.Week <= 14).GroupBy(g => g.Week);
+            var allGames = GameHandler.GetGamesByYear(year).Where(g => g.Week <= 13).GroupBy(g => g.Week);
 
             return new Api.Schedule
             {

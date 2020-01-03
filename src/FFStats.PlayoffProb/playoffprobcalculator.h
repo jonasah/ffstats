@@ -54,6 +54,7 @@ namespace ffstats::playoffprob {
       const auto game_2_results = generateGameResults(games[1]);
       const auto game_3_results = generateGameResults(games[2]);
       const auto game_4_results = generateGameResults(games[3]);
+      const auto game_5_results = generateGameResults(games[4]);
 
       auto i = 0u;
 
@@ -61,7 +62,9 @@ namespace ffstats::playoffprob {
         for (const auto& result_2 : game_2_results) {
           for (const auto& result_3 : game_3_results) {
             for (const auto& result_4 : game_4_results) {
-              results[i++] = { result_1, result_2, result_3, result_4 };
+              for (const auto& result_5 : game_5_results) {
+                results[i++] = { result_1, result_2, result_3, result_4, result_5 };
+              }
             }
           }
         }
