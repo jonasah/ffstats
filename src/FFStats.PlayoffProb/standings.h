@@ -1,8 +1,7 @@
 #ifndef STANDINGS_H
 #define STANDINGS_H
 
-#include <QtCore/QHash>
-#include <QtCore/QVarLengthArray>
+#include <cassert>
 
 #include "gameresult.h"
 #include "teamrecord.h"
@@ -15,14 +14,14 @@ namespace ffstats::playoffprob {
 
     Standings() : week(0), m_cache_valid(false) {}
 
-    const TeamRecord& teamRanked(const rank_t rank) const {
+    const auto& teamRanked(const rank_t rank) const {
       // rank is 1-based
       // records is 0-based
       return records[rank - 1];
     }
 
     void addResult(const GameResult& result) {
-      for (TeamRecord& record : records) {
+      for (auto& record : records) {
         if (result.win == record.team) {
           ++record.win;
           ++record.head2head[result.loss]; // add win against losing team
@@ -38,7 +37,7 @@ namespace ffstats::playoffprob {
 
     rank_t teamRank(const team_t team) const {
       rank_t rank = 1;
-      for (const TeamRecord& record : records) {
+      for (const auto& record : records) {
         if (team == record.team) {
           return rank;
         }
@@ -46,7 +45,7 @@ namespace ffstats::playoffprob {
         ++rank;
       }
 
-      Q_ASSERT(false);
+      assert(false);
       return 0;
     }
 
@@ -61,7 +60,7 @@ namespace ffstats::playoffprob {
       // team in potential tiebreaker
       const auto tiebreaker_teams = findTiebreakerTeams();
 
-      if (tiebreaker_teams.isEmpty() || !tiebreaker_teams.contains(team)) {
+      if (tiebreaker_teams.empty() || !tiebreaker_teams.contains(team)) {
         // tiebreaker solved, or team is not involved in tiebreaker
         return (teamRank(team) <= NUM_PLAYOFF_TEAMS);
       }
@@ -71,13 +70,13 @@ namespace ffstats::playoffprob {
     }
 
     win_t numWinsForTeam(const team_t team) const {
-      for (const TeamRecord& record : records) {
+      for (const auto& record : records) {
         if (team == record.team) {
           return record.win;
         }
       }
 
-      Q_ASSERT(false);
+      assert(false);
       return 0;
     }
 
@@ -86,10 +85,10 @@ namespace ffstats::playoffprob {
     }
 
     bool hasTiebreaker() const {
-      return !findTiebreakerTeams().isEmpty();
+      return !findTiebreakerTeams().empty();
     }
 
-    QHash<team_t, TeamRecord> findTiebreakerTeams() const {
+    std::map<team_t, TeamRecord> findTiebreakerTeams() const {
       if (m_cache_valid) {
         return m_tiebreaker_team_cache;
       }
@@ -105,9 +104,9 @@ namespace ffstats::playoffprob {
 
       rank_t rank_first = 0;
 
-      for (const TeamRecord& record : records) {
+      for (const auto& record : records) {
         if (record.win == numWinsForRank(NUM_PLAYOFF_TEAMS)) {
-          teams.insert(record.team, record);
+          teams.insert({ record.team, record });
 
           if (rank_first == 0) {
             rank_first = teamRank(record.team);
@@ -116,12 +115,13 @@ namespace ffstats::playoffprob {
       }
 
       // should find at least two teams
-      Q_ASSERT(teams.size() >= 2);
+      assert(teams.size() >= 2);
 
       if (teams.size() == 2) {
         // check h2h record
-        const auto team1_record = teams.values().first();
-        const auto team2_record = teams.values().last();
+        auto it = teams.cbegin();
+        const auto team1_record = it->second;
+        const auto team2_record = (++it)->second;
 
         if (team1_record.head2head[team2_record.team] != 0) {
           teams.clear(); // no tiebreaker
@@ -129,18 +129,19 @@ namespace ffstats::playoffprob {
       }
       else if (teams.size() > 2) {
         // make sub-records only including tiebreaker teams
-        QVarLengthArray<SubTeamRecord, NUM_TEAMS> sub_records;
+        std::vector<SubTeamRecord> sub_records;
+        sub_records.reserve(NUM_TEAMS);
 
-        for (const auto& my_record : teams) {
+        for (const auto& [my_key, my_record]: teams) {
           SubTeamRecord sub_record(my_record.team);
 
-          for (const auto& other_record : teams) {
+          for (const auto& [other_key, other_record] : teams) {
             if (other_record.team != my_record.team) {
               sub_record.win_loss += my_record.head2head[other_record.team];
             }
           }
 
-          sub_records.append(sub_record);
+          sub_records.push_back(sub_record);
         }
 
         // sort by win-loss record
@@ -157,20 +158,20 @@ namespace ffstats::playoffprob {
 
         // no of playoff teams within tiebreaker
         const size_t num_playoff_teams = NUM_PLAYOFF_TEAMS - rank_first + 1;
-        Q_ASSERT(num_playoff_teams >= 1);
+        assert(num_playoff_teams >= 1);
 
-        const SubTeamRecord& last_team_in = sub_records[static_cast<int>(num_playoff_teams - 1)];
-        const SubTeamRecord& first_team_out = sub_records[static_cast<int>(num_playoff_teams)];
+        const auto& last_team_in = sub_records[static_cast<int>(num_playoff_teams - 1)];
+        const auto& first_team_out = sub_records[static_cast<int>(num_playoff_teams)];
 
         if (last_team_in.win_loss == first_team_out.win_loss) {
           for (const auto& sub_record : sub_records) {
             if (sub_record.win_loss != last_team_in.win_loss) {
               // not involved in tiebreaker
-              teams.remove(sub_record.team);
+              teams.erase(sub_record.team);
             }
           }
 
-          Q_ASSERT(teams.size() >= 2);
+          assert(teams.size() >= 2);
         }
         else {
           // no tiebreaker
@@ -183,7 +184,7 @@ namespace ffstats::playoffprob {
     }
 
   private:
-    mutable QHash<team_t, TeamRecord> m_tiebreaker_team_cache;
+    mutable std::map<team_t, TeamRecord> m_tiebreaker_team_cache;
     mutable bool m_cache_valid = false;
   };
 

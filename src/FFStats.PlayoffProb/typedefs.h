@@ -2,29 +2,28 @@
 #define TYPEDEFS_H
 
 #include <array>
-
-#include <QtCore/QMap>
-#include <QtCore/QVector>
+#include <map>
+#include <vector>
 
 #define NUM_TEAMS 8
 #define NUM_PLAYOFF_TEAMS 4
 
 namespace ffstats::playoffprob {
 
-  using team_t = quint16;
-  using year_t = quint16;
-  using week_t = quint16;
-  using rank_t = quint16;
-  using win_t = quint16;
-  using loss_t = quint16;
-  using win_loss_t = qint16;
+  using team_t = uint16_t;
+  using year_t = uint16_t;
+  using week_t = uint16_t;
+  using rank_t = uint16_t;
+  using win_t = uint16_t;
+  using loss_t = uint16_t;
+  using win_loss_t = int16_t;
 
   // std::array with size NUM_TEAMS
   template <typename T>
   using TeamAssociativeArray = std::array<T, NUM_TEAMS>;
 
-  using Game = QPair<team_t, team_t>;
-  using Schedule = QMap<week_t, QVector<Game>>;
+  using Game = std::pair<team_t, team_t>;
+  using Schedule = std::map<week_t, std::vector<Game>>;
 
 }
 

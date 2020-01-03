@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.Processing", "FFStats.Processing\FFStats.Processing.csproj", "{40E49540-26EB-47A4-A0C3-E5786A5BC026}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -16,7 +16,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FFStats.PlayoffProb", "FFSt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.WebApp", "FFStats.WebApp\FFStats.WebApp.csproj", "{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFStats.ConvertRoster", "FFStats.ConvertRoster\FFStats.ConvertRoster.csproj", "{067B4535-A4D3-41AF-B517-BF0BE7E6F304}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FFStats.ConvertRoster", "FFStats.ConvertRoster\FFStats.ConvertRoster.csproj", "{067B4535-A4D3-41AF-B517-BF0BE7E6F304}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,9 +41,7 @@ Global
 		{96B41DB7-068A-43CB-ABCC-D5CDF76B7E06}.Release|Any CPU.ActiveCfg = Release|x64
 		{96B41DB7-068A-43CB-ABCC-D5CDF76B7E06}.Release|Any CPU.Build.0 = Release|x64
 		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{722E2BF7-E0D6-4EF3-A005-6AF315B7885B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{067B4535-A4D3-41AF-B517-BF0BE7E6F304}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{067B4535-A4D3-41AF-B517-BF0BE7E6F304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{067B4535-A4D3-41AF-B517-BF0BE7E6F304}.Release|Any CPU.ActiveCfg = Release|Any CPU

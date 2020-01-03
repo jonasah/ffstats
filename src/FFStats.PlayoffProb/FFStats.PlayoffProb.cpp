@@ -37,7 +37,7 @@ extern "C" {
       auto idx = 0U;
 
       for (const auto& record : api_standings.records) {
-        Q_ASSERT(TeamInfo::exists(record.team));
+        assert(TeamInfo::exists(record.team));
 
         const auto temp_team = TeamInfo::getTemporaryId(record.team);
 
@@ -46,7 +46,7 @@ extern "C" {
         standings.records[idx].loss = record.loss;
 
         for (const auto& h2h_record : record.h2h_records) {
-          Q_ASSERT(TeamInfo::exists(h2h_record.opponent));
+          assert(TeamInfo::exists(h2h_record.opponent));
 
           const auto temp_opponent = TeamInfo::getTemporaryId(h2h_record.opponent);
 
@@ -64,19 +64,19 @@ extern "C" {
           continue;
         }
 
-        auto games = QVector<Game>{};
+        auto games = std::vector<Game>{};
 
         for (const auto& game : week.games) {
-          Q_ASSERT(TeamInfo::exists(game.team1));
-          Q_ASSERT(TeamInfo::exists(game.team2));
+          assert(TeamInfo::exists(game.team1));
+          assert(TeamInfo::exists(game.team2));
 
-          games.append({
+          games.push_back({
             TeamInfo::getTemporaryId(game.team1),
             TeamInfo::getTemporaryId(game.team2)
           });
         }
 
-        schedule.insert(week.week, games);
+        schedule.insert({ week.week, games });
 
 #ifdef MAX_WEEKS_TO_SIMULATE
         static auto counter = 0;

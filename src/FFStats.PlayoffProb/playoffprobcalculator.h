@@ -12,9 +12,11 @@
 
 namespace ffstats::playoffprob {
 
+  constexpr auto num_results = _pow(2, NUM_TEAMS / 2);
+
   class PlayoffProbCalculator {
   public:
-    static QVector<PlayoffProbability> calculate(const Standings& start_standings, const Schedule& schedule) {
+    static std::vector<PlayoffProbability> calculate(const Standings& start_standings, const Schedule& schedule) {
       Analyzer analyzer;
 
 #ifdef TIME_MEASURE
@@ -39,14 +41,13 @@ namespace ffstats::playoffprob {
 
   private:
     // generate all possible results for a single game
-    static QVector<GameResult> generateGameResults(const Game& game) {
-      return { { game.first, game.second }, { game.second, game.first } };
+    static std::array<GameResult, 2> generateGameResults(const Game& game) {
+      return { { { game.first, game.second }, { game.second, game.first } } };
     }
 
     // generate all possible results for a single week
-    static QVector<WeekResults> generateWeekResults(const QVector<Game>& games) {
-      QVector<WeekResults> results;
-      results.reserve(_pow(2, NUM_TEAMS / 2));
+    static std::array<WeekResults, num_results> generateWeekResults(const std::vector<Game>& games) {
+      std::array<WeekResults, num_results> results;
 
       // possible results for each game (winning/losing team)
       const auto game_1_results = generateGameResults(games[0]);
@@ -54,15 +55,19 @@ namespace ffstats::playoffprob {
       const auto game_3_results = generateGameResults(games[2]);
       const auto game_4_results = generateGameResults(games[3]);
 
-      for (const GameResult& result_1 : game_1_results) {
-        for (const GameResult& result_2 : game_2_results) {
-          for (const GameResult& result_3 : game_3_results) {
-            for (const GameResult& result_4 : game_4_results) {
-              results.append({ result_1, result_2, result_3, result_4 });
+      auto i = 0u;
+
+      for (const auto& result_1 : game_1_results) {
+        for (const auto& result_2 : game_2_results) {
+          for (const auto& result_3 : game_3_results) {
+            for (const auto& result_4 : game_4_results) {
+              results[i++] = { result_1, result_2, result_3, result_4 };
             }
           }
         }
       }
+
+      assert(num_results == i);
 
       return results;
     }
@@ -81,7 +86,7 @@ namespace ffstats::playoffprob {
         return;
       }
 
-      const auto week_results = generateWeekResults(schedule[current_week]);
+      const auto week_results = generateWeekResults(schedule.at(current_week));
 
       for (const auto& result : week_results) {
         auto new_standings = prev_week_standings;

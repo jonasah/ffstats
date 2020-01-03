@@ -56,19 +56,20 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>C:\Qt\5.12.3\msvc2017_64\include</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <PreprocessorDefinitions>_DEBUG;FFSTATS_PLAYOFFPROB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Qt\5.12.3\msvc2017_64\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y $(TargetPath) $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\
-xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\
-xcopy /y "C:\Qt\5.12.3\msvc2017_64\bin\Qt5Cored.dll" $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\</Command>
+xcopy /y $(OutDir)$(TargetName).pdb $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -78,21 +79,22 @@ xcopy /y "C:\Qt\5.12.3\msvc2017_64\bin\Qt5Cored.dll" $(SolutionDir)FFStats.Proce
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Qt\5.12.3\msvc2017_64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>NDEBUG;FFSTATS_PLAYOFFPROB_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Qt\5.12.3\msvc2017_64\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y $(TargetPath) $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\
-xcopy /y "C:\Qt\5.12.3\msvc2017_64\bin\Qt5Core.dll" $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\</Command>
+      <Command>xcopy /y $(TargetPath) $(SolutionDir)FFStats.Processing\bin\$(Configuration)\netcoreapp2.1\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

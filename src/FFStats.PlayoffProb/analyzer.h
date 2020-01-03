@@ -18,7 +18,7 @@ namespace ffstats::playoffprob {
       m_counter(0)
     {
       for (team_t team = 0; team < NUM_TEAMS; ++team) {
-        m_playoff[team] = { Q_UINT64_C(0), Q_UINT64_C(0) };
+        m_playoff[team] = { 0u, 0u };
       }
     }
 
@@ -35,19 +35,17 @@ namespace ffstats::playoffprob {
       }
     }
 
-    QVector<PlayoffProbability> summarize() const {
-      auto playoff_probs = QVector<PlayoffProbability>{};
+    std::vector<PlayoffProbability> summarize() const {
+      auto playoff_probs = std::vector<PlayoffProbability>{};
       team_t team_index = 0;
 
-      for (const auto& playoffs : m_playoff) {
+      for (const auto [playoffs_excl, playoffs_incl] : m_playoff) {
         const auto team_id = TeamInfo::getDatabaseId(team_index);
-        const auto playoffs_excl = playoffs.first;
-        const auto playoffs_incl = playoffs.second;
 
         const auto playoffs_excl_prob = playoffs_excl / static_cast<double>(m_counter);
         const auto playoffs_incl_prob = playoffs_incl / static_cast<double>(m_counter);
 
-        playoff_probs.append({ team_id, playoffs_excl_prob, playoffs_incl_prob });
+        playoff_probs.push_back({ team_id, playoffs_excl_prob, playoffs_incl_prob });
 
         ++team_index;
       }
@@ -56,9 +54,9 @@ namespace ffstats::playoffprob {
     }
 
   private:
-    quint64 m_counter;
+    uint64_t m_counter;
 
-    TeamAssociativeArray<QPair<quint64, quint64>> m_playoff;
+    TeamAssociativeArray<std::pair<uint64_t, uint64_t>> m_playoff;
   };
 
 }
